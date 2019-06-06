@@ -1,2 +1,0 @@
-# FollicleFinder
-Trachomatous follicle identification
