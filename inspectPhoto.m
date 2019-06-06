@@ -56,7 +56,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     lstDotsRefresh;
     cmbAction_assign(actionType);
     cmbDiagnosis_assign(Dots.Diagnosis);
-    scroll;
+    refreshRightPanel;
     brushSize = 20;
     brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'marker', 'o', 'MarkerEdgeColor', 'black'); % Handle of custom mouse cursor
     animatedLine = animatedline('LineWidth', 1, 'Color', 'blue');
@@ -129,7 +129,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             set(txtSelObjPix   ,'string','Pixels : '   );
             set(txtSelObjValid ,'string','Type : ');
         end
-        scroll;
+        refreshRightPanel;
     end
 
     function btnDelete_clicked(src,event) %#ok, unused arguments
@@ -142,7 +142,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             lstDotsRefresh;            
             set(lstDots, 'Value', 1);
             PosZoom = [-1, -1];
-            scroll;    
+            refreshRightPanel;    
         end
     end
 
@@ -158,7 +158,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             set(lstDots, 'Value', SelObjID);
             lstDots_valueChanged(lstDots, event);
             PosZoom = [-1, -1];
-            scroll;    
+            refreshRightPanel;    
         end
     end
     function lstDotsRefresh
@@ -168,7 +168,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         if SelObjID > 0
             PosZoom = [Dots.Pos(SelObjID, 2), Dots.Pos(SelObjID, 1)];      
         end
-        scroll;
+        refreshRightPanel;
     end
 
     function ID = addDot(X, Y, R)
@@ -255,7 +255,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
     function chkShowObjects_changed(src,event) %#ok, unused arguments
-        scroll;
+        refreshRightPanel;
     end
 
     function btnZoomOut_clicked(src, event) %#ok, unused arguments
@@ -263,14 +263,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         CutNumVox = [min(CutNumVox(1)*2, ImSize(1)), min(CutNumVox(2)*2, ImSize(2))];
         PosRect   = [ceil(size(Img,2)/2-CutNumVox(2)/2), ceil(size(Img,1)/2-CutNumVox(1)/2)]; % Initial position of zoomed rectangle (top-left vertex)        
         PosZoom   = [-1, -1];
-        scroll;
+        refreshBothPanels;
     end
 
     function btnZoomIn_clicked(src, event) %#ok, unused arguments
         CutNumVox = [max(round(CutNumVox(1)/2,0), 32), max(round(CutNumVox(2)/2,0),32)];
         PosRect   = [ceil(size(Img,2)/2-CutNumVox(2)/2), ceil(size(Img,1)/2-CutNumVox(1)/2)]; % Initial position of zoomed rectangle (top-left vertex)        
         PosZoom   = [-1, -1];
-        scroll;
+        refreshBothPanels;
     end
 
     function wheel_scroll(src, event)
@@ -306,19 +306,19 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             case {'leftarrow'}
                 Pos = [max(CutNumVox(2)/2, Pos(1)-CutNumVox(1)+ceil(CutNumVox(2)/5)), Pos(2)];
                 PosZoom = [-1, -1];
-                scroll;
+                refreshRightPanel;
             case {'rightarrow'}
                 Pos = [min(size(Img,2)-1-CutNumVox(2)/2, Pos(1)+CutNumVox(2)-ceil(CutNumVox(2)/5)), Pos(2)];
                 PosZoom = [-1, -1];
-                scroll;
+                refreshRightPanel;
             case {'uparrow'}
                 Pos = [Pos(1), max(CutNumVox(1)/2, Pos(2)-CutNumVox(1)+ceil(CutNumVox(1)/5))];
                 PosZoom = [-1, -1];
-                scroll;
+                refreshRightPanel;
             case {'downarrow'}
                 Pos = [Pos(1), min(size(Img,1)-1-CutNumVox(1)/2, Pos(2)+CutNumVox(1)-ceil(CutNumVox(1)/5))];
                 PosZoom = [-1, -1];
-                scroll;
+                refreshRightPanel;
             case 'equal' , btnZoomIn_clicked;
             case 'hyphen', btnZoomOut_clicked;
         end
@@ -326,12 +326,16 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
 	%mouse handler
 	function button_down(src, event)
-		set(src,'Units','norm')
-		click_pos = get(src, 'CurrentPoint');
-        if click_pos(2) <= 0.035
+		set(src,'Units','norm');
+		click_posNorm = get(src, 'CurrentPoint');
+        set(src,'Units','pixels');
+        click_point = get(gca, 'CurrentPoint');
+        MousePosX = ceil(click_point(1,1));
+        
+        if click_posNorm(2) <= 0.035
             click = 1; % click happened on the scroll bar
             on_click(src,event);
-        else
+        else            
             click = 2; % click happened somewhere else
             on_click(src,event);
         end
@@ -339,10 +343,11 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
 	function button_up(src, event)  %#ok, unused arguments
 		click = 0;
+        click_point = get(gca, 'CurrentPoint');
+        MousePosX = ceil(click_point(1,1));
+
         switch actionType
             case {'Enclose'}
-                click_point = get(gca, 'CurrentPoint');
-                MousePosX = ceil(click_point(1,1));
                 if MousePosX > size(Img,2)
                     [x,y] = getpoints(animatedLine);
 
@@ -360,29 +365,31 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                     addPolyAreaToDot(absX, absY, SelObjID);
                 end
         end
-        scroll;
+        refreshRightPanel;
 	end
 
 	function on_click(src, event)  %#ok, unused arguments
         if click == 0
+            % Set the proper mouse pointer appearance
             set(fig_handle, 'Units', 'pixels');
             click_point = get(gca, 'CurrentPoint');
             PosX = ceil(click_point(1,1));
             PosY = ceil(click_point(1,2));
             
-            % Set the proper mouse pointer appearance
             if PosY < 0 || PosY > size(Img,1)
                 % Display the default arrow everywhere else
                 set(fig_handle, 'Pointer', 'arrow');
                 if isvalid(brush), delete(brush); end 
                 return;
             end
+            
             if PosX <= size(Img,2)
-                % Display a hand if we are in the left panel
+                % Mouse in Left Panel, display a hand
                 set(fig_handle, 'Pointer', 'fleur');
                 if isvalid(brush), delete(brush); end                    
 
             elseif PosX <= size(Img,2)*2
+                % Mouse in Right Panel, act depending of the selected tool
                 switch actionType
                     case 'Enclose'
                         % Display a crosshair
@@ -429,7 +436,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 Pos      = ClickPos;
                 PosZoom  = [-1, -1];
                 PosRect  = [ClickPos(1)-CutNumVox(2)/2, ClickPos(2)-CutNumVox(1)/2];
-                scroll;
+                refreshLeftPanel;
             else
                 % ** User clicked in the right panel (zoomed region) **
                 % Detect coordinates of the point clicked in PosZoom
@@ -452,17 +459,19 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 if strcmp(clickType, 'alt')
                     % User RIGHT-clicked in the right panel (zoomed region)
                     switch actionType
-                            case {'Add', 'Select'}
-                                % Center the view to that position
-                                PosZoom = [-1, -1];
-                                Pos     = [Pos(1)+PosZoomX-CutNumVox(2)/2,...
-                                           Pos(2)+PosZoomY-CutNumVox(1)/2];
+                            case {'Add', 'Select', 'Enclose'}
+                                % Locate position of points in respect to zoom area
+                                PosZoomX = PosX - size(Img,2)-1;
+                                PosZoomX = round(PosZoomX * CutNumVox(2)/(size(Img,2)-1));                
+                                PosZoomY = size(Img,1) - PosY;
+                                PosZoomY = CutNumVox(1)-round(PosZoomY*CutNumVox(1)/(size(Img,1)-1));
 
-                                % Make sure zoom rectangle is within image area
-                                Pos     = [max(CutNumVox(2)/2+1,Pos(1)),...
-                                           max(CutNumVox(1)/2+1,Pos(2))];
-                                Pos     = [min(size(Img,2)-CutNumVox(2)/2,Pos(1)),...
-                                           min(size(Img,1)-CutNumVox(1)/2,Pos(2))];
+                                % Locate position of points in respect to original img
+                                absX = PosZoomX + PosRect(1);
+                                absY = PosZoomY + PosRect(2);
+                                Pos     = [absX,absY];
+                                PosZoom = [-1, -1];
+                                refreshBothPanels;
                             case 'Refine'
                                 % Remove selected pixels from Dot #ID
                                 PosZoom = [PosZoomX, PosZoomY];
@@ -544,21 +553,37 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
             end
         end
-	end
+    end
 
-	function scroll
+
+	function refreshBothPanels
         %set to the right axes and call the custom redraw function
 		set(fig_handle, 'CurrentAxes', axes_handle);
         set(fig_handle,'DoubleBuffer','off');
-		[SelObjID, frame_handle, rect_handle] = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, SelObjID, Prefs);
+		[SelObjID, frame_handle, rect_handle] = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, SelObjID, Prefs, 'both');
         if SelObjID > 0
             set(lstDots, 'Value', SelObjID);
         end
     end
+	function refreshRightPanel
+        %set to the right axes and call the custom redraw function
+		set(fig_handle, 'CurrentAxes', axes_handle);
+        set(fig_handle,'DoubleBuffer','off');
+		[SelObjID, frame_handle, rect_handle] = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, SelObjID, Prefs, 'right');
+        if SelObjID > 0
+            set(lstDots, 'Value', SelObjID);
+        end
+    end
+	function refreshLeftPanel
+        %set to the right axes and call the custom redraw function
+		set(fig_handle, 'CurrentAxes', axes_handle);
+        set(fig_handle,'DoubleBuffer','on');
+		[SelObjID, frame_handle, rect_handle] = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, SelObjID, Prefs, 'left');
+    end
 end
 
 
-function [SelectedObjID, image_handle, navi_handle] = redraw(image_handle, navi_handle, ShowObjects, Pos, PosZoom, Post, NaviRectSize, Dots, Filter, SelectedObjID, Settings)
+function [SelectedObjID, image_handle, navi_handle] = redraw(image_handle, navi_handle, ShowObjects, Pos, PosZoom, Post, NaviRectSize, Dots, Filter, SelectedObjID, Settings, WhichPanel)
 %% Redraw function
 % Initialize image matrices
 f = Post(:,:,1:3);
@@ -646,20 +671,29 @@ if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Pos
     PostCutResized(1:end, 1:4, 1:3) = 75;  
 end
 
-% Draw the images on screen
+
 if image_handle == 0
+    % Draw the full image if it is the first time
     image_handle = image(cat(2, f, PostCutResized));
     axis image off
     % Draw a rectangle border over the selected area (left panel)
     navi_handle = rectangle(gca, 'Position',[fymin,fxmin,NaviRectSize(2),NaviRectSize(1)],'EdgeColor', [1 1 0],'LineWidth',2,'LineStyle','-');
 else
-    % If we already drawn the image, just update the right panel and navi
-    CData = get(image_handle, 'CData');
-    CData(:, size(CData,2)/2+1:size(CData,2),:) = PostCutResized;
-    set(image_handle, 'CData', CData);   
-    set(navi_handle, 'Position',[fymin,fxmin,NaviRectSize(2),NaviRectSize(1)]);
+    % If we already drawn the image once, just update WhichPanel is needed
+    switch  WhichPanel       
+        case 'both'
+            CData = get(image_handle, 'CData');
+            CData(:, size(CData,2)/2+1:size(CData,2),:) = PostCutResized;
+            set(image_handle, 'CData', CData);   
+            set(navi_handle, 'Position',[fymin,fxmin,NaviRectSize(2),NaviRectSize(1)]);
+        case 'left'
+            set(navi_handle, 'Position',[fymin,fxmin,NaviRectSize(2),NaviRectSize(1)]);
+        case 'right'
+            CData = get(image_handle, 'CData');
+            CData(:, size(CData,2)/2+1:size(CData,2),:) = PostCutResized;
+            set(image_handle, 'CData', CData);   
+    end
 end
-
 
 %assignin('base','CData', get(image_handle, 'CData')); % Debug to see drawn matrix
 
