@@ -15,7 +15,8 @@
 % + Speeded up "Refine" tool by convolving pixels only at mouseUp event
 % + Everytime a new objct is added, it is also selected from list for stats
 % + Refine tool uses custom circle mouse pointer same diameter as brush
-%
+% + Brush size now correctly scaled when zoom level is changed
+
 % Version 1.1 - created on 2019-06-05
 %
 % + Diagnosis field to determine the diagnosis for the current photo

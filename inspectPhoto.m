@@ -181,17 +181,17 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         refreshRightPanel;
     end
 
-    function ID = addDot(X, Y, R)
+    function ID = addDot(X, Y, D)
         % Creates a new object #ID from pixels within R radius
         % X,Y: center coordinates, R: radius in zoomed region pixels 
         
         % Convert radius from zoomed to image units region scaling factor
-        scaling = size(Img,1) / CutNumVox(1);
-        r = R / scaling;
+        ZoomFactor = size(Img,1) / CutNumVox(1);
+        r = D / ZoomFactor /2;
         
         % Create a circular mask around the pixel [xc,yc] of radius r
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
-        mask = (x-X).^2 + (y-Y).^2 < r.^2;
+        mask = (x-X).^2 + (y-Y).^2 < r^2;
         
         % Generate statistics of the new dot and add to Dots
         if isempty(Dots.Pos)
@@ -217,7 +217,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         
         % Convert radius from zoomed to image units region scaling factor
         scaling = size(Img,1)/CutNumVox(1);
-        r = R/scaling;
+        r = R/scaling/2;
         
         % Convolve a circular mask around the pixel [xc,yc] of radius r
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
@@ -269,7 +269,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         
         % Convert radius from zoomed to image units region scaling factor
         scaling = size(Img,1)/CutNumVox(1);
-        r = R/scaling;
+        r = R/scaling/2;
         
         % Convolve a circular mask around the pixel [xc,yc] of radius r
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
@@ -407,10 +407,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                     % Right-click: remove pixels on path from object                    
                     clickType = get(fig_handle, 'SelectionType');
                     
-                    if strcmp(clickType, 'normal') 
-                        addPxToDot(absX, absY, brushSize, SelObjID);                
+                    if strcmp(clickType, 'normal')                       
+                        ZoomFactor = size(Img,1) / CutNumVox(1);
+                        brushSizeScaled = brushSize * ZoomFactor;
+                        addPxToDot(absX, absY, brushSizeScaled, SelObjID);                
                     elseif strcmp(clickType, 'alt') 
-                        removePxFromDot(absX, absY, brushSize, SelObjID);                                                
+                        ZoomFactor = size(Img,1) / CutNumVox(1);
+                        brushSizeScaled = brushSize * ZoomFactor;                        
+                        removePxFromDot(absX, absY, brushSizeScaled, SelObjID);                                                
                     end
                     delete(animatedLine);
                 end
@@ -452,15 +456,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
                         % Recreate the brush because frame is redrawn otherwise
                         % just redraw the brush in the new location
-                        brushSizeScaled = brushSize * (size(Img,1) / CutNumVox(1));
+                        ZoomFactor = size(Img,1) / CutNumVox(1);
+                        brushSizeScaled = brushSize * ZoomFactor;
                         PosXfenced = max(brushSizeScaled/2, min(PosX-brushSizeScaled/2, size(Img,2)*2-brushSizeScaled-2));
                         PosYfenced = max(brushSizeScaled/2, min(PosY-brushSizeScaled/2, size(Img,1)*2-brushSizeScaled-2)); 
                         brushPos = [PosXfenced, PosYfenced, brushSizeScaled, brushSizeScaled];
                         if ~isvalid(brush)  
                             brush = rectangle(axes_handle,'Position', brushPos,'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
-                            %brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'marker', 'o', 'MarkerEdgeColor', 'black', 'XData', PosX, 'YData', PosY); % Handle of custom mouse cursor
                         else
-                            %brush = rectangle(axes_handle,'Position', [PosX, PosY, brushSize, brushSize],'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
                             set(brush, 'Position',  brushPos);
                         end
                 end
@@ -500,15 +503,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 PosZoomY = size(Img,2) - PosY;
                 PosZoomY = CutNumVox(1)-round(PosZoomY*CutNumVox(1)/(size(Img,1)-1));
                 
-                brushSizeScaled = brushSize * (size(Img,1) / CutNumVox(1));
+                ZoomFactor = size(Img,1) / CutNumVox(1);
+                brushSizeScaled = brushSize * ZoomFactor;
                 PosXfenced = max(brushSizeScaled/2, min(PosX-brushSizeScaled/2, size(Img,2)*2-brushSizeScaled-2));
                 PosYfenced = max(brushSizeScaled/2, min(PosY-brushSizeScaled/2, size(Img,1)*2-brushSizeScaled-2));
                 brushPos = [PosXfenced, PosYfenced, brushSizeScaled, brushSizeScaled];
                 if ~isvalid(brush)
                     brush = rectangle(axes_handle,'Position', brushPos,'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
-                    %brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'marker', 'o', 'MarkerEdgeColor', 'black', 'XData', PosX, 'YData', PosY); % Handle of custom mouse cursor
                 else
-                    %brush = rectangle(axes_handle,'Position', [PosX, PosY, brushSize, brushSize],'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
                     set(brush, 'Position',  brushPos);
                 end
                 
@@ -548,7 +550,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                 absY  = fypad+fymin+PosZoom(2);
                                 if absX>0 && absX<=size(Img,2) && absY>0 && absY<=size(Img,1)
                                     if ~isvalid(animatedLine)
-                                        animatedLine = animatedline('LineWidth', brushSize, 'Color', 'red');
+                                        ZoomFactor = size(Img,1) / CutNumVox(1);
+                                        brushSizeScaled = brushSize * ZoomFactor;                                        
+                                        animatedLine = animatedline('LineWidth', brushSizeScaled/2, 'Color', 'red');
                                     else
                                         addpoints(animatedLine, PosX, PosY); 
                                     end                                     
@@ -574,11 +578,15 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                         switch actionType
                             case 'Add'
                                 % Create a new Dot in this location
-                                addDot(absX, absY, brushSize);                                
+                                ZoomFactor = size(Img,1) / CutNumVox(1);
+                                brushSizeScaled = brushSize * ZoomFactor;                                
+                                addDot(absX, absY, brushSizeScaled);                                
                             case 'Refine'
                                 % Add selected pixels to Dot #ID
                                 if ~isvalid(animatedLine)
-                                    animatedLine = animatedline('LineWidth', brushSize, 'Color', 'blue');
+                                    ZoomFactor = size(Img,1) / CutNumVox(1);
+                                    brushSizeScaled = brushSize * ZoomFactor;                                      
+                                    animatedLine = animatedline('LineWidth', brushSizeScaled/2, 'Color', 'blue');
                                 else
                                     addpoints(animatedLine, PosX, PosY); 
                                 end 
