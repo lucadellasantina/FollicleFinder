@@ -1,16 +1,9 @@
 %% Follicle Finder - Recognize trachomatous follicles in eyelid photographs
 %  Copyright (C) 2019 Luca Della Santina
 %
-%% TODO-log
-%
-% inspectPhoto: when adding a new follicle, select it and show stats
-% make labels in the format required for training pixels classifiers
-% simplify findObjects and use it for automatic segmentation
-%
-%
 %% ChangeLog
 %
-% Version 1.2 - created on 2019-06-06
+% Version 1.2 - created on 2019-06-07
 %
 % + Custom crosshair pointer for pixel-level precision selection
 % + Zoomed region drawn in left panel as an overlayed rectangle object
@@ -18,6 +11,10 @@
 % + Follicles of all types are drawn on screen
 % + Speeded up inspectPhoto by refreshing only the changed panel
 % + Fixed inverted direction panning when user right-clicked on right panel
+% + Custom circular brush with pixel-level precision for "Add" tool
+% + Speeded up "Refine" tool by convolving pixels only at mouseUp event
+% + Everytime a new objct is added, it is also selected from list for stats
+% + Refine tool uses custom circle mouse pointer same diameter as brush
 %
 % Version 1.1 - created on 2019-06-05
 %

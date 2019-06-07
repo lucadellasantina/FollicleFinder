@@ -1,22 +1,19 @@
 %% Follicle Finder - Recognize trachomatous follicles in eyelid photographs
 %  Copyright (C) 2019 Luca Della Santina
 %
-% TODO: move zoom region if user selected listbox item out of field of view
-% The painting radius seems to be working when I adjust the denominator of the Res/72 according to the screen dimensions. 26 worked for the widescreen on my desk while 36 worked for the square screen. 
-% Also, the viewport seems to get real wacky when trying to do the right-click to center the focus of the zoom. This is an issue I'd like to show you in person because it's a little complicated to articulate over email. 
-% Finally, I was unsure if this was deliberate, but the "maybe" dots don't show up unless selected.
+
 function Dots = inspectPhoto(Img, Dots, Prefs)
     % Default parameter values
     CutNumVox   = ceil(size(Img)/Prefs.Zoom); % Size of zoomed region    
     Pos         = [ceil(size(Img,2)/2), ceil(size(Img,1)/2)]; % Initial mouse position
     PosRect     = [ceil(size(Img,2)/2-CutNumVox(2)/2), ceil(size(Img,1)/2-CutNumVox(1)/2)]; % Initial position of zoomed rectangle (top-left vertex)
     PosZoom     = [-1, -1]; % Mouse position inside the zoomed area
-	click       = 0;        % Initialize click status
+	click       = false;    % Initialize click status
     SelObjID    = 0;        % Initialize selected object ID#
     actionType  = Prefs.actionType; % Mode of operation
     analysisDone= false;    % Flag to determine if we should close the UI
 	
-	% Initialize GUI
+	% Initialize GUI Figure window
 	fig_handle = figure('Name','Photo inspector (click locations on right panel to add follicles)','NumberTitle','off','Color',[.3 .3 .3], 'MenuBar','none', 'Units','norm', ...
 		'WindowButtonDownFcn',@button_down, 'WindowButtonUpFcn',@button_up, 'WindowButtonMotionFcn', @on_click, 'KeyPressFcn', @key_press,'windowscrollWheelFcn', @wheel_scroll, 'CloseRequestFcn', @closeRequest);
 
@@ -32,7 +29,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     btnZoomOut      = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.200,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
     btnZoomIn       = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.200,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
     txtDiagnosis    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.125,.085,.02],'String','Diagnosis:'); %#ok, unused variable
-    cmbDiagnosis    = uicontrol('Style','popup'     ,'Units','normalized','Position',[.912,.080,.080,.04],'String', {'Normal','TF','TI','TT','CO'},'Callback', @cmbDiagnosis_changed);
+    cmbDiagnosis    = uicontrol('Style','popup'     ,'Units','normalized','Position',[.912,.080,.080,.04],'String', {'Normal','TF','TI','TT','TS','CO'},'Callback', @cmbDiagnosis_changed);
     btnSave         = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.020,.088,.05],'String','Done','Callback',@btnSave_clicked); %#ok, unused variable    
     
     % Selected object info
@@ -44,25 +41,21 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     txtSelObjValid  = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.410,.085,.02],'String','Type : ');    
     btnValidate     = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.360,.088,.04],'String','Change validation (v)','Callback',@btnValidate_clicked); %#ok, unused variable
     
-	% Main drawing axes for video display
-    size_video = [0 0 0.90 1];
-    if size_video(2) < 0.03
-        size_video(2) = 0.03;
-    end % bottom 0.03 will be used for scroll bar HO 2/17/2011
-	axes_handle = axes('Position',size_video);
-	frame_handle = 0;
-    rect_handle = 0;
+    % Main drawing area and related handles
+	axes_handle     = axes('Position', [0 0 0.903 1]);
+	frame_handle    = 0;
+    rect_handle     = 0;
+    brushSize       = 20;
+    brush           = rectangle(axes_handle,'Curvature', [1 1],'EdgeColor', [1 1 0],'LineWidth',2,'LineStyle','-');
+    animatedLine    = animatedline('LineWidth', 1, 'Color', 'blue');
     
-    lstDotsRefresh;
     cmbAction_assign(actionType);
-    cmbDiagnosis_assign(Dots.Diagnosis);
-    refreshRightPanel;
-    brushSize = 20;
-    brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'marker', 'o', 'MarkerEdgeColor', 'black'); % Handle of custom mouse cursor
-    animatedLine = animatedline('LineWidth', 1, 'Color', 'blue');
-    uiwait;
+    cmbDiagnosis_assign(Dots.Diagnosis);    
+    lstDotsRefresh;   % List all objects and refresh image
+    uiwait;           % The GUI waits for user interaction as default state 
     
     function closeRequest(src,event) %#ok unused parameters
+        % Close the GUI and return detected objects
         if ~analysisDone
             Dots = [];
         end
@@ -70,6 +63,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
     function btnSave_clicked(src, event)
+        % Trigger closure of the GUI and return detected objects
         analysisDone = true;
         closeRequest(src,event);
     end
@@ -98,6 +92,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             case 2, Dots.Diagnosis = 'TF';
             case 3, Dots.Diagnosis = 'TI';
             case 4, Dots.Diagnosis = 'TT';
+            case 6, Dots.Diagnosis = 'TS';
             case 5, Dots.Diagnosis = 'CO';
         end
     end
@@ -108,12 +103,15 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             case 'TF',      set(cmbDiagnosis, 'Value', 2);
             case 'TI',      set(cmbDiagnosis, 'Value', 3);
             case 'TT',      set(cmbDiagnosis, 'Value', 4);
-            case 'CO',      set(cmbDiagnosis, 'Value', 5);
+            case 'TS',      set(cmbDiagnosis, 'Value', 5);
+            case 'CO',      set(cmbDiagnosis, 'Value', 6);
         end
     end
 
     function lstDots_valueChanged(src,event) %#ok, unused arguments
+        % Update on-screen info of selected object        
         SelObjID = get(src, 'Value');
+        
         if SelObjID > 0 && numel(Dots.Filter)>0
             set(txtSelObjID    ,'string',['ID#: ' num2str(SelObjID)]);
             set(txtSelObjPos   ,'string',['Pos X:' num2str(Dots.Pos(SelObjID,1)) ', Y:' num2str(Dots.Pos(SelObjID,2))]);
@@ -124,36 +122,39 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 case 0,  set(txtSelObjValid ,'string','Type : Maybe');
             end
         else
-            set(txtSelObjID    ,'string','ID#: '       );
-            set(txtSelObjPos   ,'string','Pos : '    );
-            set(txtSelObjPix   ,'string','Pixels : '   );
+            set(txtSelObjID    ,'string','ID#: ');
+            set(txtSelObjPos   ,'string','Pos : ');
+            set(txtSelObjPix   ,'string','Pixels : ');
             set(txtSelObjValid ,'string','Type : ');
         end
         refreshRightPanel;
     end
 
     function btnDelete_clicked(src,event) %#ok, unused arguments
+        % Remove selected object from the list
         if SelObjID > 0
             Dots.Pos(SelObjID, :) = [];
             Dots.Vox(SelObjID)    = [];
             Dots.Filter(SelObjID) = [];
-            SelObjID = numel(Dots.Filter);
 
-            lstDotsRefresh;            
-            set(lstDots, 'Value', 1);
+            if SelObjID > numel(Dots.Filter)
+                SelObjID = numel(Dots.Filter);
+                set(lstDots, 'Value', 1);
+            end
             PosZoom = [-1, -1];
+            lstDotsRefresh;            
             refreshRightPanel;    
         end
     end
 
     function btnValidate_clicked(src,event) %#ok, unused arguments
+        % Change the validation status of selected object        
         if SelObjID > 0
             switch Dots.Filter(SelObjID)
-                case 0, Dots.Filter(SelObjID)   = 1;
-                case 1, Dots.Filter(SelObjID)   = -1;
-                case -1, Dots.Filter(SelObjID)  = 0;
+                case 0, Dots.Filter(SelObjID)   = 1;  % Switch to True
+                case 1, Dots.Filter(SelObjID)   = -1; % Switch to False
+                case -1, Dots.Filter(SelObjID)  = 0;  % Switch to Maybe
             end
-
             
             set(lstDots, 'Value', SelObjID);
             lstDots_valueChanged(lstDots, event);
@@ -161,18 +162,30 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             refreshRightPanel;    
         end
     end
+
     function lstDotsRefresh
-        % Update list of available ROIs
+        % Updates list of available Objects (Objects are ROIs in the image)
         set(lstDots, 'String', 1:numel(Dots.Filter));
         set(txtValidObjs,'string',['Total: ' num2str(numel(find(Dots.Filter)))]);
-        if SelObjID > 0
-            PosZoom = [Dots.Pos(SelObjID, 2), Dots.Pos(SelObjID, 1)];      
+        
+        if SelObjID > 0 && SelObjID <= numel(Dots.Filter)            
+            PosZoom = [Dots.Pos(SelObjID, 2), Dots.Pos(SelObjID, 1)];
+            set(lstDots, 'Value', SelObjID);
+            lstDots_valueChanged(lstDots, []);            
+        elseif SelObjID > numel(Dots.Filter)
+            SelObjID = numel(Dots.Filter);
+            set(lstDots, 'Value', SelObjID);
+            disp('dot was out of range');
         end
+        
         refreshRightPanel;
     end
 
     function ID = addDot(X, Y, R)
-        % Compute the actual radius from zoomed region scaling factor
+        % Creates a new object #ID from pixels within R radius
+        % X,Y: center coordinates, R: radius in zoomed region pixels 
+        
+        % Convert radius from zoomed to image units region scaling factor
         scaling = size(Img,1) / CutNumVox(1);
         r = R / scaling;
         
@@ -199,13 +212,22 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
     function addPxToDot(X, Y, R, ID)
-        % Compute the actual radius from zoomed region scaling factor
+        % Adds pixels within R radius to object #ID
+        % X,Y: center coordinates, R: radius in zoomed region pixels 
+        
+        % Convert radius from zoomed to image units region scaling factor
         scaling = size(Img,1)/CutNumVox(1);
         r = R/scaling;
         
-        % Create a circular mask around the pixel [xc,yc] of radius r
+        % Convolve a circular mask around the pixel [xc,yc] of radius r
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
-        mask = (x-X).^2 + (y-Y).^2 < r.^2;
+        for i = 1:numel(X)
+            if i==1
+                mask = (x-X(i)).^2 + (y-Y(i)).^2 < r.^2;
+            else
+                mask = mask | (x-X(i)).^2 + (y-Y(i)).^2 < r.^2;
+            end
+        end
 
         % Add new pixels to those belonging to Dot #ID
         if ID > 0
@@ -216,6 +238,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
     function addPolyAreaToDot(xv, yv, ID)
+        % Adds all pixels within area of passed polygon to object #ID
+        % xv,yv: coordinates of the polygon vertices
+        % ID: object number to which add the pixels
+        
         % Switch mouse pointer to hourglass while computing
         oldPointer = get(fig_handle, 'Pointer');
         set(fig_handle, 'Pointer', 'watch'); pause(0.3);
@@ -238,15 +264,24 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
     function removePxFromDot(X, Y, R, ID)
-        % Compute the actual radius from zoomed region scaling factor
+        % Removes pixels within R radius from object #ID
+        % X,Y: center coordinates, R: radius in zoomed region pixels 
+        
+        % Convert radius from zoomed to image units region scaling factor
         scaling = size(Img,1)/CutNumVox(1);
         r = R/scaling;
         
-        % Create a circular mask around the pixel [xc,yc] of radius r
+        % Convolve a circular mask around the pixel [xc,yc] of radius r
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
-        mask = (x-X).^2 + (y-Y).^2 < r.^2;
+        for i = 1:numel(X)
+            if i==1
+                mask = (x-X(i)).^2 + (y-Y(i)).^2 < r.^2;
+            else
+                mask = mask | (x-X(i)).^2 + (y-Y(i)).^2 < r.^2;
+            end
+        end
 
-        % Add new pixels to those belonging to Dot #ID
+        % Pixels flagged in mask from those belonging to Dot #ID
         if ID > 0
             Dots.Vox(ID).Ind = setdiff(Dots.Vox(ID).Ind, find(mask), 'sorted');
             Dots.Vox(ID).Pos = [];
@@ -280,7 +315,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
               brushSize = brushSize -1;
               if brushSize < 1, brushSize = 1; end
           end
-          click = 0;
+          click = false;
           on_click(src, event);
     end
     
@@ -325,26 +360,15 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
 	%mouse handler
-	function button_down(src, event)
-		set(src,'Units','norm');
-		click_posNorm = get(src, 'CurrentPoint');
-        set(src,'Units','pixels');
-        click_point = get(gca, 'CurrentPoint');
-        MousePosX = ceil(click_point(1,1));
-        
-        if click_posNorm(2) <= 0.035
-            click = 1; % click happened on the scroll bar
-            on_click(src,event);
-        else            
-            click = 2; % click happened somewhere else
-            on_click(src,event);
-        end
+	function button_down(src, event)   
+        click = true;
+        on_click(src,event);
 	end
 
 	function button_up(src, event)  %#ok, unused arguments
-		click = 0;
+		click       = false;
         click_point = get(gca, 'CurrentPoint');
-        MousePosX = ceil(click_point(1,1));
+        MousePosX   = ceil(click_point(1,1));
 
         switch actionType
             case {'Enclose'}
@@ -363,13 +387,39 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
                     % Fill every point within delimited perimeter
                     addPolyAreaToDot(absX, absY, SelObjID);
+                    delete(animatedLine);
+                end
+            case {'Refine'}
+                if MousePosX > size(Img,2)                    
+                    [x,y] = getpoints(animatedLine);
+
+                    % Locate position of points in respect to zoom area
+                    PosZoomX = x - size(Img,2)-1;
+                    PosZoomX = round(PosZoomX * CutNumVox(2)/(size(Img,2)-1));                
+                    PosZoomY = size(Img,1) - y;
+                    PosZoomY = CutNumVox(1)-round(PosZoomY*CutNumVox(1)/(size(Img,1)-1));
+
+                    % Locate position of points in respect to original img
+                    absX = PosZoomX + PosRect(1);
+                    absY = PosZoomY + PosRect(2);
+                    
+                    % Left-click:  add pixels on path to object
+                    % Right-click: remove pixels on path from object                    
+                    clickType = get(fig_handle, 'SelectionType');
+                    
+                    if strcmp(clickType, 'normal') 
+                        addPxToDot(absX, absY, brushSize, SelObjID);                
+                    elseif strcmp(clickType, 'alt') 
+                        removePxFromDot(absX, absY, brushSize, SelObjID);                                                
+                    end
+                    delete(animatedLine);
                 end
         end
         refreshRightPanel;
 	end
 
 	function on_click(src, event)  %#ok, unused arguments
-        if click == 0
+        if ~click
             % Set the proper mouse pointer appearance
             set(fig_handle, 'Units', 'pixels');
             click_point = get(gca, 'CurrentPoint');
@@ -391,27 +441,27 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             elseif PosX <= size(Img,2)*2
                 % Mouse in Right Panel, act depending of the selected tool
                 switch actionType
-                    case 'Enclose'
-                        % Display a crosshair
-                        set(fig_handle, 'Pointer', 'crosshair');
-                        if isvalid(brush), delete(brush); end 
-                        return;
-                    case 'Select'
-                        %set(fig_handle, 'Pointer', 'arrow');
+                    case {'Enclose', 'Select'}
                         [PCData, PHotSpot] = getPointerCrosshair;
                         set(fig_handle, 'Pointer', 'custom', 'PointerShapeCData', PCData, 'PointerShapeHotSpot', PHotSpot);
                         if isvalid(brush), delete(brush); end 
-                    otherwise                        
+                    case {'Add', 'Refine'}
                         % Display a circle if we are in the right panel
                         set(fig_handle, 'pointer', 'custom', 'PointerShapeCData', NaN(16,16));
                         PosZoom = [-1, -1];
 
                         % Recreate the brush because frame is redrawn otherwise
                         % just redraw the brush in the new location
-                        if ~isvalid(brush)                    
-                            brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'marker', 'o', 'MarkerEdgeColor', 'black', 'XData', PosX, 'YData', PosY); % Handle of custom mouse cursor
+                        brushSizeScaled = brushSize * (size(Img,1) / CutNumVox(1));
+                        PosXfenced = max(brushSizeScaled/2, min(PosX-brushSizeScaled/2, size(Img,2)*2-brushSizeScaled-2));
+                        PosYfenced = max(brushSizeScaled/2, min(PosY-brushSizeScaled/2, size(Img,1)*2-brushSizeScaled-2)); 
+                        brushPos = [PosXfenced, PosYfenced, brushSizeScaled, brushSizeScaled];
+                        if ~isvalid(brush)  
+                            brush = rectangle(axes_handle,'Position', brushPos,'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
+                            %brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'marker', 'o', 'MarkerEdgeColor', 'black', 'XData', PosX, 'YData', PosY); % Handle of custom mouse cursor
                         else
-                            set(brush, 'MarkerSize',  brushSize,  'XData', PosX, 'YData', PosY);
+                            %brush = rectangle(axes_handle,'Position', [PosX, PosY, brushSize, brushSize],'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
+                            set(brush, 'Position',  brushPos);
                         end
                 end
             else
@@ -419,7 +469,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 set(fig_handle, 'Pointer', 'arrow');
                 if isvalid(brush), delete(brush); end                    
             end                       
-        elseif click == 2
+        else
             % ** User clicked on the image get XY-coordinates in pixels **
             
             set(fig_handle, 'Units', 'pixels');
@@ -427,6 +477,8 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             PosX = ceil(click_point(1,1));
             PosY = ceil(click_point(1,2));
             if PosX <= size(Img,2)
+                % ** User clicked in the Left panel (image navigator) **
+                % Mozed the zoomed region to that center point
                 % Make sure zoom rectangle is within image area
                 ClickPos = [max(CutNumVox(2)/2+1, PosX),...
                             max(CutNumVox(1)/2+1, PosY)];
@@ -448,10 +500,16 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 PosZoomY = size(Img,2) - PosY;
                 PosZoomY = CutNumVox(1)-round(PosZoomY*CutNumVox(1)/(size(Img,1)-1));
                 
-                if ~isvalid(brush)                    
-                    brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'Marker', 'o', 'MarkerEdgeColor', 'black', 'XData', PosX, 'YData', PosY); % Handle of custom mouse cursor
+                brushSizeScaled = brushSize * (size(Img,1) / CutNumVox(1));
+                PosXfenced = max(brushSizeScaled/2, min(PosX-brushSizeScaled/2, size(Img,2)*2-brushSizeScaled-2));
+                PosYfenced = max(brushSizeScaled/2, min(PosY-brushSizeScaled/2, size(Img,1)*2-brushSizeScaled-2));
+                brushPos = [PosXfenced, PosYfenced, brushSizeScaled, brushSizeScaled];
+                if ~isvalid(brush)
+                    brush = rectangle(axes_handle,'Position', brushPos,'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
+                    %brush = line('linestyle', 'none', 'MarkerSize', brushSize, 'marker', 'o', 'MarkerEdgeColor', 'black', 'XData', PosX, 'YData', PosY); % Handle of custom mouse cursor
                 else
-                    set(brush, 'Marker', 'o','MarkerSize',  brushSize,  'XData', PosX, 'YData', PosY);
+                    %brush = rectangle(axes_handle,'Position', [PosX, PosY, brushSize, brushSize],'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
+                    set(brush, 'Position',  brushPos);
                 end
                 
                 % Do different things depending whether left/right-clicked
@@ -472,6 +530,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                 Pos     = [absX,absY];
                                 PosZoom = [-1, -1];
                                 refreshBothPanels;
+                                
                             case 'Refine'
                                 % Remove selected pixels from Dot #ID
                                 PosZoom = [PosZoomX, PosZoomY];
@@ -493,7 +552,6 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                     else
                                         addpoints(animatedLine, PosX, PosY); 
                                     end                                     
-                                    removePxFromDot(absX, absY, brushSize, SelObjID);
                                 end
                     end                   
                 elseif strcmp(clickType, 'normal')
@@ -524,7 +582,6 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                 else
                                     addpoints(animatedLine, PosX, PosY); 
                                 end 
-                                addPxToDot(absX, absY, brushSize, SelObjID);
                             case 'Select'
                                 % Locate position of points in respect to zoom area
                                 PosZoomX = PosX - size(Img,2)-1;
@@ -540,7 +597,11 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                     set(lstDots, 'Value', SelObjID);
                                 end
                             case 'Enclose'
-                                set(fig_handle, 'Pointer', 'crosshair');
+                                % Set mouse pointer shape to a crosshair
+                                [PCData, PHotSpot] = getPointerCrosshair;
+                                set(fig_handle, 'Pointer', 'custom', 'PointerShapeCData', PCData, 'PointerShapeHotSpot', PHotSpot);
+                                if isvalid(brush), delete(brush); end 
+
                                 % Add selected pixels to Dot #ID
                                 if ~isvalid(animatedLine)
                                     animatedLine = animatedline('LineWidth', 1, 'Color', 'blue');
@@ -557,7 +618,6 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
 
 	function refreshBothPanels
-        %set to the right axes and call the custom redraw function
 		set(fig_handle, 'CurrentAxes', axes_handle);
         set(fig_handle,'DoubleBuffer','off');
 		[SelObjID, frame_handle, rect_handle] = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, SelObjID, Prefs, 'both');
@@ -565,8 +625,8 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             set(lstDots, 'Value', SelObjID);
         end
     end
+
 	function refreshRightPanel
-        %set to the right axes and call the custom redraw function
 		set(fig_handle, 'CurrentAxes', axes_handle);
         set(fig_handle,'DoubleBuffer','off');
 		[SelObjID, frame_handle, rect_handle] = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, SelObjID, Prefs, 'right');
@@ -574,8 +634,8 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             set(lstDots, 'Value', SelObjID);
         end
     end
+
 	function refreshLeftPanel
-        %set to the right axes and call the custom redraw function
 		set(fig_handle, 'CurrentAxes', axes_handle);
         set(fig_handle,'DoubleBuffer','on');
 		[SelObjID, frame_handle, rect_handle] = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, SelObjID, Prefs, 'left');
@@ -594,9 +654,9 @@ PostCutResized = zeros(size(Post,1), size(Post,2), 3, 'uint8');
 if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Post,1))
     % Identify XY borders of the area to zoom according to passed mouse
     % position Pos. Note: Pos(2) is X, Pos(1) is Y
-    fxmin = max(ceil(Pos(2) - NaviRectSize(1)/2), 1);
+    fxmin = max(ceil(Pos(2) - NaviRectSize(1)/2)+1, 1);
     fxmax = min(ceil(Pos(2) + NaviRectSize(1)/2), size(Post,1));
-    fymin = max(ceil(Pos(1) - NaviRectSize(2)/2), 1);
+    fymin = max(ceil(Pos(1) - NaviRectSize(2)/2)+1, 1);
     fymax = min(ceil(Pos(1) + NaviRectSize(2)/2), size(Post,2));
     fxpad = NaviRectSize(1) - (fxmax - fxmin); % add padding if position of selected rectangle fall out of image
     fypad = NaviRectSize(2) - (fymax - fymin); % add padding if position of selected rectangle fall out of image
@@ -671,7 +731,6 @@ if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Pos
     PostCutResized(1:end, 1:4, 1:3) = 75;  
 end
 
-
 if image_handle == 0
     % Draw the full image if it is the first time
     image_handle = image(cat(2, f, PostCutResized));
@@ -694,32 +753,16 @@ else
             set(image_handle, 'CData', CData);   
     end
 end
-
-%assignin('base','CData', get(image_handle, 'CData')); % Debug to see drawn matrix
-
-end
-
-function Res = detectPxPerPt
-    %% Sets the units of your root object (screen) to pixels
-    set(0,'units','pixels');
-    %Obtains this pixel information
-    Pix_SS = get(0,'screensize');
-    %Sets the units of your root object (screen) to inches
-    set(0,'units','inches');
-    %Obtains this inch information
-    Inch_SS = get(0,'screensize');
-    %Calculates the resolution (pixels per inch)
-    Res = Pix_SS./Inch_SS;
-    Res = Res(3);
-    % Convert resolution to px per pt (1 Point is defined as 1/72" inches)
-    Res = Res/72;
+%assignin('base','CData', get(image_handle, 'CData')); % Use for Debugging
 end
 
 function [ShapeCData, HotSpot] = getPointerCrosshair
-    %% Custom mouse crosshair pointer sensitive at cross intersection point 
-    ShapeCData = zeros(32,32);
-    ShapeCData(:,:) = NaN;
+    %% Custom mouse crosshair pointer sensitive at arms intersection point 
+    ShapeCData          = zeros(32,32);
+    ShapeCData(:,:)     = NaN;
     ShapeCData(15:17,:) = 1;
-    ShapeCData(:, 15:17) = 1;
-    HotSpot = [16,16];
+    ShapeCData(:, 15:17)= 1;
+    ShapeCData(16,:)    = 2;
+    ShapeCData(:, 16)   = 2;
+    HotSpot             = [16,16];
 end
