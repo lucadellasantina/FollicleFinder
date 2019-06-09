@@ -619,7 +619,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                 
                                 % Select the Dot below mouse pointer
                                 set(fig_handle, 'CurrentAxes', axes_handle);
-                                SelObjID = redraw(chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, 0, Prefs);
+                                SelObjID = redraw(frame_handle, rect_handle, chkShowObjects.Value, Pos, PosZoom, Img, CutNumVox, Dots, Dots.Filter, 0, Prefs, 'right');
                                 if SelObjID > 0
                                     set(lstDots, 'Value', SelObjID);
                                 end
