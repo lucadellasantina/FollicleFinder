@@ -3,7 +3,7 @@
 %
 %% ChangeLog
 %
-% Version 1.2 - created on 2019-06-07
+% Version 1.2 - created on 2019-06-08
 %
 % + Custom crosshair pointer for pixel-level precision selection
 % + Zoomed region drawn in left panel as an overlayed rectangle object
@@ -16,6 +16,10 @@
 % + Everytime a new objct is added, it is also selected from list for stats
 % + Refine tool uses custom circle mouse pointer same diameter as brush
 % + Brush size now correctly scaled when zoom level is changed
+% + Allow user to use custom colors to label follicles
+% + Store/load preferences across sessions, or restore defaults via button
+% + Error in Refine mode when animatedLine had no new pixels to add/remove
+% + If user selected listbox item out of field of view, center view on it
 
 % Version 1.1 - created on 2019-06-05
 %

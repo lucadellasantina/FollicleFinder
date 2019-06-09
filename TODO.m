@@ -1,9 +1,6 @@
 %% ---- Manual identification of follicles via GUI ------------------------
 %
 % + Debugging
-% |-- If user selected listbox item out of field of view, center it in view
-% |-- Store labels in the format required for training pixel classifiers
-% |-- Allow user to use custom colors to label follicles
 %
 %% ----- Calibration of images using anatomical features ------------------
 %
@@ -31,6 +28,7 @@
 % + Generate a pixel classifier to detect the eyelid region in photos
 % |- Start by manually find the area of interest in the ground truth photos
 % |- Look in MATLAB's computer vision toolbox for net architecture
+% |- Store labels in the format required for training pixel classifiers
 % |- If no good, convert PlOS2019 net architecture (on Travis' GitHub)
 % |- For each eyelid, make sure to store orientation of major axis
 % |- For each eyelid, store perimeter (will be used later to measure dists)

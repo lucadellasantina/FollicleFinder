@@ -113,9 +113,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         SelObjID = get(src, 'Value');
         
         if SelObjID > 0 && numel(Dots.Filter)>0
-            set(txtSelObjID    ,'string',['ID#: ' num2str(SelObjID)]);
-            set(txtSelObjPos   ,'string',['Pos X:' num2str(Dots.Pos(SelObjID,1)) ', Y:' num2str(Dots.Pos(SelObjID,2))]);
-            set(txtSelObjPix   ,'string',['Pixels : ' num2str(numel(Dots.Vox(SelObjID).Ind))]);
+            set(txtSelObjID ,'string',['ID#: ' num2str(SelObjID)]);
+            set(txtSelObjPos,'string',['Pos X:' num2str(Dots.Pos(SelObjID,1)) ', Y:' num2str(Dots.Pos(SelObjID,2))]);
+            set(txtSelObjPix,'string',['Pixels : ' num2str(numel(Dots.Vox(SelObjID).Ind))]);
             switch Dots.Filter(SelObjID)
                 case 1,  set(txtSelObjValid ,'string','Type : True');
                 case -1, set(txtSelObjValid ,'string','Type : False');
@@ -127,7 +127,24 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             set(txtSelObjPix   ,'string','Pixels : ');
             set(txtSelObjValid ,'string','Type : ');
         end
-        refreshRightPanel;
+
+        % Store Zoom rectangle vertez coodinates (clockwise from top-left)
+        Rect(1,:) = [PosRect(1), PosRect(2)];
+        Rect(2,:) = [PosRect(1)+CutNumVox(2), PosRect(2)];
+        Rect(3,:) = [PosRect(1)+CutNumVox(2), PosRect(2)+CutNumVox(1)];
+        Rect(4,:) = [PosRect(1), PosRect(2)+CutNumVox(1)];
+
+        if SelObjID > 0 && ~inpolygon(Dots.Pos(SelObjID,1), Dots.Pos(SelObjID,2),Rect(:,1), Rect(:,2))
+            Pos = [Dots.Pos(SelObjID,1), Dots.Pos(SelObjID,2)];
+            % Ensure new position is within boundaries of the image
+            Pos     = [max(Pos(1),CutNumVox(2)/2), max(Pos(2), CutNumVox(1)/2)];
+            Pos     = [min(Pos(1),size(Img,2)-CutNumVox(2)/2), min(Pos(2), size(Img,1)-CutNumVox(1)/2)];
+            PosRect = [Pos(1)-CutNumVox(2)/2, Pos(2)-CutNumVox(1)/2];
+            PosZoom = [-1 -1];
+            refreshBothPanels;
+        else
+            refreshRightPanel;
+        end
     end
 
     function btnDelete_clicked(src,event) %#ok, unused arguments
@@ -151,9 +168,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         % Change the validation status of selected object        
         if SelObjID > 0
             switch Dots.Filter(SelObjID)
-                case 0, Dots.Filter(SelObjID)   = 1;  % Switch to True
-                case 1, Dots.Filter(SelObjID)   = -1; % Switch to False
-                case -1, Dots.Filter(SelObjID)  = 0;  % Switch to Maybe
+                case 0, Dots.Filter(SelObjID)  = 1;  % Switch to True
+                case 1, Dots.Filter(SelObjID)  = -1; % Switch to False
+                case -1, Dots.Filter(SelObjID) = 0;  % Switch to Maybe
             end
             
             set(lstDots, 'Value', SelObjID);
@@ -171,7 +188,8 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         if SelObjID > 0 && SelObjID <= numel(Dots.Filter)            
             PosZoom = [Dots.Pos(SelObjID, 2), Dots.Pos(SelObjID, 1)];
             set(lstDots, 'Value', SelObjID);
-            lstDots_valueChanged(lstDots, []);            
+            lstDots_valueChanged(lstDots, []);
+            
         elseif SelObjID > numel(Dots.Filter)
             SelObjID = numel(Dots.Filter);
             set(lstDots, 'Value', SelObjID);
@@ -196,7 +214,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         % Generate statistics of the new dot and add to Dots
         if isempty(Dots.Pos)
             Dots.Pos(1,:)       = [X,Y];            
-            Dots.Vox(1).Ind        = find(mask);
+            Dots.Vox(1).Ind     = find(mask);
             [Dots.Vox(1).Pos(:,1), Dots.Vox(1).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(1).Ind);            
             Dots.Filter         = 1;
         else
@@ -219,6 +237,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         scaling = size(Img,1)/CutNumVox(1);
         r = R/scaling/2;
         
+        mask = [];
         % Convolve a circular mask around the pixel [xc,yc] of radius r
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
         for i = 1:numel(X)
@@ -230,7 +249,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         end
 
         % Add new pixels to those belonging to Dot #ID
-        if ID > 0
+        if ID > 0 && ~isempty(mask)
             Dots.Vox(ID).Ind = union(Dots.Vox(ID).Ind, find(mask), 'sorted');
             Dots.Vox(ID).Pos = [];
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
@@ -248,7 +267,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
         % Create mask inside the passed polygon coordinates
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
-        mask = inpolygon(x,y,xv,yv);
+        mask   = inpolygon(x,y,xv,yv);
 
         % Add new pixels to those belonging to Dot #ID
         if ID == 0
@@ -624,7 +643,6 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         end
     end
 
-
 	function refreshBothPanels
 		set(fig_handle, 'CurrentAxes', axes_handle);
         set(fig_handle,'DoubleBuffer','off');
@@ -650,14 +668,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 end
 
-
 function [SelectedObjID, image_handle, navi_handle] = redraw(image_handle, navi_handle, ShowObjects, Pos, PosZoom, Post, NaviRectSize, Dots, Filter, SelectedObjID, Settings, WhichPanel)
-%% Redraw function
-% Initialize image matrices
-f = Post(:,:,1:3);
-PostCut = zeros(NaviRectSize(1), NaviRectSize(2), 3, 'uint8');
-PostVoxMapCut = PostCut;
-PostCutResized = zeros(size(Post,1), size(Post,2), 3, 'uint8');
+%% Redraw function, full image on left panel, zoomed area on right panel
+% Note: Post(1) and PostCut(1) = Y location,Post(2) PostCut(2) = X location
+
+f               = Post(:,:,1:3);
+PostCut         = zeros(NaviRectSize(1), NaviRectSize(2), 3, 'uint8');
+PostCutResized  = zeros(size(Post,1), size(Post,2), 3, 'uint8');
+PostVoxMapCut   = PostCut;
 
 if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Post,1))
     % Identify XY borders of the area to zoom according to passed mouse
@@ -672,12 +690,7 @@ if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Pos
     % Find which objects are within the zoomed area
     passIcut = Filter;
     for i = 1:numel(passIcut)
-        if (Dots.Pos(i,2)>fxmin) && (Dots.Pos(i,2)<fxmax) && (Dots.Pos(i,1)>fymin) && (Dots.Pos(i,1)<fymax)
-            %disp('found dot within rect');
-            passIcut(i) = 1;
-        else
-            passIcut(i) = 0;
-        end
+        passIcut(i) = (Dots.Pos(i,2)>fxmin) && (Dots.Pos(i,2)<fxmax) && (Dots.Pos(i,1)>fymin) && (Dots.Pos(i,1)<fymax);
     end
     
     % Flag voxels of passing objects that are within zoomed area
@@ -726,11 +739,9 @@ if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Pos
     end
     
     % Draw the right panel containing a zoomed version of selected area
-    PostCut(fxpad+1:fxpad+fxmax-fxmin+1, fypad+1:fypad+fymax-fymin+1,:) = f(fxmin:fxmax, fymin:fymax, :);
-    assignin('base', 'PostCut', PostCut);
-    assignin('base', 'PostVoxMapCut', PostVoxMapCut);
+    PostCut(fxpad+1:fxpad+fxmax-fxmin, fypad+1:fypad+fymax-fymin,:) = f(fxmin:fxmax-1, fymin:fymax-1, :);
     if ShowObjects
-        PostCutResized = imresize(PostCut,[size(Post,1), size(Post,2)], 'nearest') + imresize(PostVoxMapCut,[size(Post,1), size(Post,2)], 'nearest');
+        PostCutResized = imresize(PostCut+PostVoxMapCut,[size(Post,1), size(Post,2)], 'nearest');
     else
         PostCutResized = imresize(PostCut,[size(Post,1), size(Post,2)], 'nearest');
     end    
@@ -761,7 +772,6 @@ else
             set(image_handle, 'CData', CData);   
     end
 end
-%assignin('base','CData', get(image_handle, 'CData')); % Use for Debugging
 end
 
 function [ShapeCData, HotSpot] = getPointerCrosshair
