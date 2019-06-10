@@ -5,10 +5,10 @@
 %% ----- Calibration of images using anatomical features ------------------
 %
 % + Use tarsal gland ducts opening size (constant) to calibrate images
-% |- Find in the medical literature the diameter of these ducts +-SEM
-% |- Implement a third manual segmentation mode for these ducts
+% |ND- Find in the medical literature the diameter of these ducts +-SEM - Literature seems to be inconsistent, going to review information with Tom.
+% |ND- Implement a third manual segmentation mode for these ducts
 % |- Automatize identification of ducts using findObjects() or NeuralNet 
-% |- Ensure these ducts are visible in all photos taken
+% |ND- Ensure these ducts are visible in all photos taken -I will separate out a folder for photos in which the glands are visible
 % |- Don't process age information of the patient if this feat is universal
 %
 % + Use eyelash thickness
