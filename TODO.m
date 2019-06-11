@@ -26,8 +26,8 @@
 %% ----- Automatic eyelid segmentation  -----------------------------------
 %
 % + Generate a pixel classifier to detect the eyelid region in photos
-% |- Start by manually find the area of interest in the ground truth photos
-% |- Look in MATLAB's computer vision toolbox for net architecture
+% |ND Start by manually find the area of interest in the ground truth photos
+% |ND Look in MATLAB's computer vision toolbox for net architecture
 % |- Store labels in the format required for training pixel classifiers
 % |- If no good, convert PlOS2019 net architecture (on Travis' GitHub)
 % |- For each eyelid, make sure to store orientation of major axis
