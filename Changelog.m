@@ -3,6 +3,11 @@
 %
 %% ChangeLog
 %
+% Version 1.3 - created on 2019-06-08
+%
+% + Licensed under the GNU General Public License v3 (GPLv3)
+% + Automatic follicle finder using findObjects2D iterative thresholding
+%
 % Version 1.2 - created on 2019-06-08
 %
 % + Custom crosshair pointer for pixel-level precision selection

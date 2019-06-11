@@ -1,9 +1,10 @@
-%% ObjectFinder - Recognize 3D structures in image stacks
-%  Copyright (C) 2016-2019 Luca Della Santina
+%% Follicle Finder - Recognize trachomatous follicles in eyelid photographs
+%  Copyright (C) 2019 Luca Della Santina
 %
-%  This file is part of ObjectFinder
+
+%  This file is part of Follicle Finder
 %
-%  ObjectFinder is free software: you can redistribute it and/or modify
+%  Follicle Finder is free software: you can redistribute it and/or modify
 %  it under the terms of the GNU General Public License as published by
 %  the Free Software Foundation, either version 3 of the License, or
 %  (at your option) any later version.

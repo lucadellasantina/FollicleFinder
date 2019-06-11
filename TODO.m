@@ -5,10 +5,10 @@
 %% ----- Calibration of images using anatomical features ------------------
 %
 % + Use tarsal gland ducts opening size (constant) to calibrate images
-% |ND- Find in the medical literature the diameter of these ducts +-SEM - Literature seems to be inconsistent, going to review information with Tom.
-% |ND- Implement a third manual segmentation mode for these ducts
-% |- Automatize identification of ducts using findObjects() or NeuralNet
-% |ND- Ensure these ducts are visible in all photos taken -I will separate out a folder for photos in which the glands are visible
+% |- Find in the medical literature the diameter of these ducts +-SEM
+% |- Implement a third manual segmentation mode for these ducts
+% |- Automatize identification of ducts using findObjects() or NeuralNet 
+% |- Ensure these ducts are visible in all photos taken
 % |- Don't process age information of the patient if this feat is universal
 %
 % + Use eyelash thickness
@@ -36,9 +36,9 @@
 %% ----- Automatic follicles segmentation ---------------------------------
 %
 % + Refactor findObjects() from ObjectFinder to work on 2D RGB images
-% |LDS- Isolate the function from ObjectFinder
-% |LDS- Generate a GUI tab to allow user to set findObjects() search settings
-% |LDS- Adapt the output of findObjects() to be compatible with Follicles
+% |- Isolate the function from ObjectFinder
+% |- Generate a GUI tab to allow user to set findObjects() search settings
+% |- Adapt the output of findObjects() to be compatible with Follicles
 %
 % + Generate a pixel classifier to detect the eyelid region in photos
 % |- Start by manually find the area of interest in the ground truth photos
