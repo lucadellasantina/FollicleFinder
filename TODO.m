@@ -1,6 +1,10 @@
 %% ---- Manual identification of follicles via GUI ------------------------
 %
 % + Debugging
+% + Include TF score for follicles F0-F3 scale
+% + Include TI score for eyelid    C0-C3 scale
+% + Change diagnosis definition from Normal to T-Normal
+% + Use longer dimension of eyelid for calibration of images
 %
 %% ----- Calibration of images using anatomical features ------------------
 %
