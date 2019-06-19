@@ -28,7 +28,6 @@ files = dir(TrainingFolder); % List the content of /Training folder
         T = load([TrainingFolder filesep files(d).name]);
         NumDone = ['F:' num2str(numel(T.ImagesList)-numel(T.ImagesTODOFollicles)) '/' num2str(numel(T.ImagesList))];
         NumDone = [NumDone ' E:' num2str(numel(T.ImagesList)-numel(T.ImagesTODOEyelid)) '/' num2str(numel(T.ImagesList))];
-        NumDone = [NumDone ' D:' num2str(numel(T.ImagesList)-numel(T.ImagesTODODucts)) '/' num2str(numel(T.ImagesList))];
         if isempty(tblT)
             tblT = table({T.User},  {T.ImagesFolder}, {T.Type}, {T.Date}, {NumDone}, {T.UID});
         else

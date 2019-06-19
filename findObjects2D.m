@@ -38,7 +38,7 @@ Igl           = [];
 
 %% -- STEP 2: scan the volume and find areas crossing local contrast threshold with a progressively coarser intensity filter --
 tic;
-fprintf('Searching candidate objects using multi-threaded iterarive threshold ... ');
+fprintf('Searching candidate objects... ');
 maxDotSize       = Settings.objfinder.maxDotSize; 
 minDotSize       = Settings.objfinder.minDotSize; 
 minIntensity     = Settings.objfinder.minIntensity;
@@ -95,7 +95,7 @@ fprintf(['DONE in ' num2str(toc) ' seconds \n']);
 
 tic;
 if Settings.objfinder.watershed
-    fprintf('Split multi-peak objects using multi-threaded watershed segmentation ... ');
+    fprintf('Split multi-peak objects using watershed segmentation ... ');
     use_watershed = true;
 else
     fprintf('Watershed DISABLED by user, collecting candidate objects... ');

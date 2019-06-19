@@ -40,11 +40,17 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     cmbAction       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Add (a)', 'Refine (r)','Select (s)', 'Enclose(e)'},'Callback', @cmbAction_changed);
     chkShowObjects  = uicontrol('Style','checkbox'  ,'Units','normalized','position',[.912,.870,.085,.02],'String','Show (spacebar)', 'Value',1,'Callback',@chkShowObjects_changed);
     lstDots         = uicontrol('Style','listbox'   ,'Units','normalized','position',[.907,.600,.085,.25],'String',[],'Callback',@lstDots_valueChanged);
-    txtZoom         = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.260,.050,.02],'String','Zoom level:'); %#ok, unused variable
-    btnZoomOut      = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.200,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
-    btnZoomIn       = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.200,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
-    txtDiagnosis    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.125,.085,.02],'String','Diagnosis:'); %#ok, unused variable
-    cmbDiagnosis    = uicontrol('Style','popup'     ,'Units','normalized','Position',[.912,.080,.080,.04],'String', {'Normal','TF','TI','TT','TS','CO'},'Callback', @cmbDiagnosis_changed);
+    txtZoom         = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.320,.050,.02],'String','Zoom level:'); %#ok, unused variable
+    btnZoomOut      = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.260,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
+    btnZoomIn       = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.260,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
+    txtScores       = uicontrol('Style','text'      ,'Units','normalized','position',[.905,.220,.090,.02],'String','Scores:'); %#ok, unused variable
+    cmbScoreF       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.910,.170,.025,.04],'String', {'F0','F1','F2','F3'}, 'Callback',@cmbScoreF_changed);
+    cmbScoreP       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.940,.170,.025,.04],'String', {'P0','P1','P2','P3'}, 'Callback',@cmbScoreP_changed);
+    cmbScoreC       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.970,.170,.025,.04],'String', {'C0','C1','C2','C3'}, 'Callback',@cmbScoreC_changed);
+    cmbScoreTE      = uicontrol('Style','popup'     ,'Units','normalized','Position',[.915,.125,.030,.04],'String', {'T/E0','T/E1','T/E2','T/E3'}, 'Callback',@cmbScoreTE_changed);
+    cmbScoreCC      = uicontrol('Style','popup'     ,'Units','normalized','Position',[.955,.125,.030,.04],'String', {'CC0','CC1','CC2','CC3'}, 'Callback',@cmbScoreCC_changed);
+    txtDiagnosis    = uicontrol('Style','text'      ,'Units','normalized','position',[.905,.095,.045,.02],'String','Diagnosis:'); %#ok, unused variable
+    cmbDiagnosis    = uicontrol('Style','popup'     ,'Units','normalized','Position',[.950,.080,.045,.04],'String', {'TNormal','TF','TI', 'TF+TI','TS','TT','CO'},'Callback', @cmbDiagnosis_changed);
     btnSave         = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.020,.088,.05],'String','Done','Callback',@btnSave_clicked); %#ok, unused variable    
     
     % Selected object info
@@ -65,6 +71,11 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     animatedLine    = animatedline('LineWidth', 1, 'Color', 'blue');
     
     cmbAction_assign(actionType);
+    cmbScoreF_assign(Dots.Scores.F);
+    cmbScoreP_assign(Dots.Scores.P);
+    cmbScoreC_assign(Dots.Scores.C);
+    cmbScoreTE_assign(Dots.Scores.TE);
+    cmbScoreCC_assign(Dots.Scores.CC);
     cmbDiagnosis_assign(Dots.Diagnosis);    
     lstDotsRefresh;   % List all objects and refresh image
     uiwait;           % The GUI waits for user interaction as default state 
@@ -101,25 +112,84 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         end
     end
 
+    function cmbScoreF_changed(src, event) %#ok, unused parameters
+        Dots.Scores.F = get(src, 'Value')-1;
+    end
+    function cmbScoreP_changed(src, event) %#ok, unused parameters
+        Dots.Scores.P = get(src, 'Value')-1;
+    end
+    function cmbScoreC_changed(src, event) %#ok, unused parameters
+        Dots.Scores.C = get(src, 'Value')-1;
+    end
+    function cmbScoreTE_changed(src, event) %#ok, unused parameters
+        Dots.Scores.TE = get(src, 'Value')-1;
+    end
+    function cmbScoreCC_changed(src, event) %#ok, unused parameters
+        Dots.Scores.CC = get(src, 'Value')-1;
+    end
+
+    function cmbScoreF_assign(newScore)
+        switch newScore
+            case 0, set(cmbScoreF, 'Value', 1);                
+            case 1, set(cmbScoreF, 'Value', 2);
+            case 2, set(cmbScoreF, 'Value', 3);
+            case 3, set(cmbScoreF, 'Value', 4);
+        end
+    end
+    function cmbScoreP_assign(newScore)
+        switch newScore
+            case 0, set(cmbScoreP, 'Value', 1);                
+            case 1, set(cmbScoreP, 'Value', 2);
+            case 2, set(cmbScoreP, 'Value', 3);
+            case 3, set(cmbScoreP, 'Value', 4);
+        end
+    end
+    function cmbScoreC_assign(newScore)
+        switch newScore
+            case 0, set(cmbScoreC, 'Value', 1);                
+            case 1, set(cmbScoreC, 'Value', 2);
+            case 2, set(cmbScoreC, 'Value', 3);
+            case 3, set(cmbScoreC, 'Value', 4);
+        end
+    end
+    function cmbScoreTE_assign(newScore)
+        switch newScore
+            case 0, set(cmbScoreTE, 'Value', 1);                
+            case 1, set(cmbScoreTE, 'Value', 2);
+            case 2, set(cmbScoreTE, 'Value', 3);
+            case 3, set(cmbScoreTE, 'Value', 4);
+        end
+    end
+    function cmbScoreCC_assign(newScore)
+        switch newScore
+            case 0, set(cmbScoreCC, 'Value', 1);                
+            case 1, set(cmbScoreCC, 'Value', 2);
+            case 2, set(cmbScoreCC, 'Value', 3);
+            case 3, set(cmbScoreCC, 'Value', 4);
+        end
+    end
+
     function cmbDiagnosis_changed(src, event) %#ok, unused parameters
         switch get(src, 'Value')
-            case 1, Dots.Diagnosis = 'Normal';
+            case 1, Dots.Diagnosis = 'TNormal';
             case 2, Dots.Diagnosis = 'TF';
             case 3, Dots.Diagnosis = 'TI';
-            case 4, Dots.Diagnosis = 'TT';
-            case 6, Dots.Diagnosis = 'TS';
-            case 5, Dots.Diagnosis = 'CO';
+            case 4, Dots.Diagnosis = 'TF+TI';
+            case 5, Dots.Diagnosis = 'TS';
+            case 6, Dots.Diagnosis = 'TT';
+            case 7, Dots.Diagnosis = 'CO';
         end
     end
 
     function cmbDiagnosis_assign(newDiagnosis)
         switch newDiagnosis
-            case 'Normal',  set(cmbDiagnosis, 'Value', 1);                
+            case 'TNormal', set(cmbDiagnosis, 'Value', 1);                
             case 'TF',      set(cmbDiagnosis, 'Value', 2);
             case 'TI',      set(cmbDiagnosis, 'Value', 3);
-            case 'TT',      set(cmbDiagnosis, 'Value', 4);
+            case 'TF+TI',   set(cmbDiagnosis, 'Value', 4);
             case 'TS',      set(cmbDiagnosis, 'Value', 5);
-            case 'CO',      set(cmbDiagnosis, 'Value', 6);
+            case 'TT',      set(cmbDiagnosis, 'Value', 6);
+            case 'CO',      set(cmbDiagnosis, 'Value', 7);
         end
     end
 

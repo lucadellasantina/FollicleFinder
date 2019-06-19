@@ -1,9 +1,6 @@
 %% ---- Manual identification of follicles via GUI ------------------------
 %
 % + Debugging
-% + Include TF score for follicles F0-F3 scale
-% + Include TI score for eyelid    C0-C3 scale
-% + Change diagnosis definition from Normal to T-Normal
 % + Use longer dimension of eyelid for calibration of images
 %
 %% ----- Calibration of images using anatomical features ------------------
@@ -30,8 +27,8 @@
 %% ----- Automatic eyelid segmentation  -----------------------------------
 %
 % + Generate a pixel classifier to detect the eyelid region in photos
-% |ND Start by manually find the area of interest in the ground truth photos
-% |ND Look in MATLAB's computer vision toolbox for net architecture
+% |- Start by manually find the area of interest in the ground truth photos
+% |- Look in MATLAB's computer vision toolbox for net architecture
 % |- Store labels in the format required for training pixel classifiers
 % |- If no good, convert PlOS2019 net architecture (on Travis' GitHub)
 % |- For each eyelid, make sure to store orientation of major axis
