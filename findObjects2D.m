@@ -48,7 +48,7 @@ minIntensity     = Settings.objfinder.minIntensity;
 for i = Gmax :-1: ceil(Gmode * minIntensity)+1
     
     % Label all areas in the block (Igl) that crosses the intensity "i"
-    % bwconncomp+labelmatrix is ~10% faster than using belabeln
+    % bwconncomp+labelmatrix is ~10% faster than using bwlabeln
     CC     = bwconncomp(Img >= i,6);
     labels = CC.NumObjects;
     Igl    = labelmatrix(CC);

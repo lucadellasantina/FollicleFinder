@@ -56,6 +56,14 @@
 %
 %% ----- Automatic validation of follicle candidates ----------------------
 %
+% - Store pixel data inside Training.Follicles struct for each segmented
+% follicle
+% - Create a match function to correlate automatically detected follicles
+% with manually painted ones
+% -Generate a imagedatastore from the automatically detected follicles to
+% train ML models
+%
+%
 % + Create a classifier using the WHO criteria for follicle identification
 % |-- Follicle size >= 5mm (check with Tom his latest standard)
 % |-- Follicle color off-white (find examples of white and yellow false+)
