@@ -213,13 +213,13 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             set(txtSelObjValid ,'string','Type : ');
         end
 
-        % Store Zoom rectangle vertez coodinates (clockwise from top-left)
+        % Store Zoom rectangle verteces coodinates (clockwise from top-left)
         Rect(1,:) = [PosRect(1), PosRect(2)];
         Rect(2,:) = [PosRect(1)+CutNumVox(2), PosRect(2)];
         Rect(3,:) = [PosRect(1)+CutNumVox(2), PosRect(2)+CutNumVox(1)];
         Rect(4,:) = [PosRect(1), PosRect(2)+CutNumVox(1)];
 
-        if SelObjID > 0 && ~inpolygon(Dots.Pos(SelObjID,1), Dots.Pos(SelObjID,2),Rect(:,1), Rect(:,2))
+        if SelObjID > 0 && ~inpolygon_fast(Dots.Pos(SelObjID,1), Dots.Pos(SelObjID,2),Rect(:,1), Rect(:,2))
             Pos = [Dots.Pos(SelObjID,1), Dots.Pos(SelObjID,2)];
             % Ensure new position is within boundaries of the image
             Pos     = [max(Pos(1),CutNumVox(2)/2), max(Pos(2), CutNumVox(1)/2)];
@@ -364,8 +364,8 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
         % Create mask inside the passed polygon coordinates
         [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
-        mask   = inpolygon(x,y,xv,yv);
-
+        mask   = inpolygon_fast(x,y,xv,yv); % faster implementation, ~75x
+        
         % Add new pixels to those belonging to Dot #ID
         if ID == 0
             ID = addDot(ceil(mean(xv)),ceil(mean(yv)),5);
