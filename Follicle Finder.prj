@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1163866245" file="/home/luca/Dropbox/MATLAB scripts/FollicleFinder/Follicle Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/FollicleFinder" name="Follicle Finder" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="58371687" file="/home/luca/Dropbox/MATLAB scripts/FollicleFinder/Follicle Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/FollicleFinder" name="Follicle Finder" target="target.mlapps" target-name="Package App">
     <param.appname>Follicle Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
@@ -12,8 +12,8 @@
     </param.icons>
     <param.summary>Identify trachomatous follicles in eyelid photos</param.summary>
     <param.description>Copyright 2019 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tp79b06cb5_9c80_4958_956a_2f281d8f8d5a.png</param.screenshot>
-    <param.version>1.9.5</param.version>
+    <param.screenshot>/tmp/tp6033309e_2ade_413c_9dde_535e0e6e8f87.png</param.screenshot>
+    <param.version>1.9.6</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Image Processing Toolbox</item>

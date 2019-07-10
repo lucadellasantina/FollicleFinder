@@ -308,15 +308,13 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             [Dots.Vox(end).Pos(:,1), Dots.Vox(end).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(end).Ind);            
             Dots.Filter(end+1)  = 1;
         end 
-        
-        % Extract raw brightness levels (R,G,B) for each masked pixel
-        Dots.Vox(end).RawBright = [];
-        for i = 1:numel(Dots.Vox(end).Ind)
-            Dots.Vox(end).RawBright(i,:) = Img(Dots.Vox(end).Pos(i,1),Dots.Vox(end).Pos(i,2),:);
-        end
-        
+                
         SelObjID = numel(Dots.Filter);
         ID = SelObjID;
+
+        % Extract raw brightness levels (R,G,B) for each masked pixel
+        Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+
         lstDotsRefresh;
     end
 
@@ -346,10 +344,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
-            Dots.Vox(ID).RawBright = [];
-            for i = 1:numel(Dots.Vox(ID).Ind)
-                Dots.Vox(ID).RawBright(i,:) = Img(Dots.Vox(ID).Pos(i,1),Dots.Vox(ID).Pos(i,2),:);
-            end
+            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
         end        
     end
 
@@ -373,15 +368,13 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         
         if ID > 0
             Dots.Vox(ID).Ind = union(Dots.Vox(ID).Ind, find(mask), 'sorted');
-            Dots.Vox(ID).Pos = [];
+            Dots.Vox(ID).Pos = zeros(numel(Dots.Vox(ID).Ind), 2);
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
-            Dots.Vox(ID).RawBright = [];
-            for i = numel(Dots.Vox(ID).Ind):-1:1
-                Dots.Vox(ID).RawBright(i,:) = Img(Dots.Vox(ID).Pos(i,1),Dots.Vox(ID).Pos(i,2),:);
-            end
-        end        
+            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+        end 
+        
         set(fig_handle, 'Pointer', oldPointer);
     end
 
@@ -410,10 +403,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
-            Dots.Vox(ID).RawBright = [];
-            for i = 1:numel(Dots.Vox(ID).Ind)
-                Dots.Vox(ID).RawBright(i,:) = Img(Dots.Vox(ID).Pos(i,1),Dots.Vox(ID).Pos(i,2),:);
-            end
+            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));            
         end        
     end
 
