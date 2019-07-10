@@ -3,13 +3,15 @@
 %
 %% ChangeLog
 %
-% Version 2.0 - created on 2019-06-08
+% Version 2.0 alpha - created on 2019-07-10
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding
 % + Added individual grading for each disease hallmark (F,P,C,TE,CC)
 % + Added diagnosis type (TNormal,TF,TI,TF+TI,TS,TT,CO) for each image
 % + Removed tarsal duct detection (need to use different method to calib)
+% + Stored R,G,B pixel brightness of each masked object in Vox.RawBright
+% + inspectPhoto fixed redraw glitches when mouse is closed to img border
 %
 % Version 1.2 - created on 2019-06-08
 %

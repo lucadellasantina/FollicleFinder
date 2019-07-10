@@ -307,6 +307,12 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             Dots.Vox(end+1).Ind = find(mask);
             [Dots.Vox(end).Pos(:,1), Dots.Vox(end).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(end).Ind);            
             Dots.Filter(end+1)  = 1;
+        end 
+        
+        % Extract raw brightness levels (R,G,B) for each masked pixel
+        Dots.Vox(end).RawBright = [];
+        for i = 1:numel(Dots.Vox(end).Ind)
+            Dots.Vox(end).RawBright(i,:) = Img(Dots.Vox(end).Pos(i,1),Dots.Vox(end).Pos(i,2),:);
         end
         
         SelObjID = numel(Dots.Filter);
@@ -338,6 +344,12 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             Dots.Vox(ID).Ind = union(Dots.Vox(ID).Ind, find(mask), 'sorted');
             Dots.Vox(ID).Pos = [];
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
+
+            % Extract raw brightness levels (R,G,B) for each masked pixel
+            Dots.Vox(ID).RawBright = [];
+            for i = 1:numel(Dots.Vox(ID).Ind)
+                Dots.Vox(ID).RawBright(i,:) = Img(Dots.Vox(ID).Pos(i,1),Dots.Vox(ID).Pos(i,2),:);
+            end
         end        
     end
 
@@ -363,8 +375,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             Dots.Vox(ID).Ind = union(Dots.Vox(ID).Ind, find(mask), 'sorted');
             Dots.Vox(ID).Pos = [];
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
+
+            % Extract raw brightness levels (R,G,B) for each masked pixel
+            Dots.Vox(ID).RawBright = [];
+            for i = numel(Dots.Vox(ID).Ind):-1:1
+                Dots.Vox(ID).RawBright(i,:) = Img(Dots.Vox(ID).Pos(i,1),Dots.Vox(ID).Pos(i,2),:);
+            end
         end        
-        set(fig_handle, 'Pointer', oldPointer);        
+        set(fig_handle, 'Pointer', oldPointer);
     end
 
     function removePxFromDot(X, Y, R, ID)
@@ -390,6 +408,12 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             Dots.Vox(ID).Ind = setdiff(Dots.Vox(ID).Ind, find(mask), 'sorted');
             Dots.Vox(ID).Pos = [];
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
+
+            % Extract raw brightness levels (R,G,B) for each masked pixel
+            Dots.Vox(ID).RawBright = [];
+            for i = 1:numel(Dots.Vox(ID).Ind)
+                Dots.Vox(ID).RawBright(i,:) = Img(Dots.Vox(ID).Pos(i,1),Dots.Vox(ID).Pos(i,2),:);
+            end
         end        
     end
 
@@ -534,7 +558,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             PosX = ceil(click_point(1,1));
             PosY = ceil(click_point(1,2));
             
-            if PosY < 0 || PosY > size(Img,1)
+            if PosY < 0 || PosY > size(Img,1)-brushSize
                 % Display the default arrow everywhere else
                 set(fig_handle, 'Pointer', 'arrow');
                 if isvalid(brush), delete(brush); end 

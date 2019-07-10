@@ -20,6 +20,8 @@
 function Dots = findObjects2D(Img, Settings)
 %% -- STEP 1: Estimate background level and initialize variables
 
+Img = rgb2gray(Img(:,:,1:3)); %Convert the image to BW from RGB by averaging
+
 % Estimate either background level (Gmode) according to setting
 switch Settings.objfinder.noiseEstimator
     case'mode', Gmode = mode(Img(Img>0)); % Most common intensity (excluding zero)                
@@ -28,12 +30,9 @@ switch Settings.objfinder.noiseEstimator
     otherwise,  Gmode = 0;
 end
 Gmax          = max(Img(:));
-sizeIgm       = [size(Img,1), size(Img,2), size(Img,3)];
-
-peakMap       = zeros(sizeIgm(1), sizeIgm(2), sizeIgm(3),'uint8'); % Initialize matrix to map peaks found
+sizeIgm       = [size(Img,1), size(Img,2)];
+peakMap       = zeros(sizeIgm(1), sizeIgm(2),'uint8'); % Initialize matrix to map peaks found
 thresholdMap  = peakMap; % Initialize matrix to sum passed thresholds
-
-startPos      = [1, 1, 1];
 Igl           = [];
 
 %% -- STEP 2: scan the volume and find areas crossing local contrast threshold with a progressively coarser intensity filter --
@@ -172,12 +171,12 @@ for i = 1:nLabels
             peakIndex           = peakIndex(1); % Make sure there is only one peak at this stage
         end
         
-        [yPeak,xPeak, zPeak] = ind2sub(sizeIgm, peakIndex);
-        [yPos, xPos, zPos]  = ind2sub(sizeIgm, Voxels);
+        [yPeak,xPeak]       = ind2sub(sizeIgm, peakIndex);
+        [yPos, xPos]        = ind2sub(sizeIgm, Voxels);
         
-        tmpDot.Pos          = [yPeak+startPos(1)-1, xPeak+startPos(2)-1, zPeak+startPos(3)-1];
-        tmpDot.Vox.Pos      = [yPos+startPos(1)-1,  xPos+startPos(2)-1, zPos+startPos(3)-1];
-        tmpDot.Vox.Ind      = sub2ind([size(Img,1) size(Img,2) size(Img,3)], tmpDot.Vox.Pos(:,1), tmpDot.Vox.Pos(:,2), tmpDot.Vox.Pos(:,3));
+        tmpDot.Pos          = [yPeak, xPeak];
+        tmpDot.Vox.Pos      = [yPos,  xPos];
+        tmpDot.Vox.Ind      = Voxels;
         tmpDot.Vox.RawBright= Img(Voxels);
         tmpDot.Vol          = size(unique(tmpDot.Vox.Pos(:, 1:2), 'rows'),1); % Use only X,Y data to measure how many pixels (3rd dimension = color)
         tmpDot.Vox.IT       = thresholdMap(Voxels);
