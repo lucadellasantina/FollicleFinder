@@ -15,6 +15,7 @@
 % + Common framework to store / train / test neura networks
 % + Design NeuralNet architecture using Deep Network Designer
 % + Import NeuralNet layers from base workspace into selected NeuralNet
+% + Batch image resize tool
 %
 % Version 1.2 - created on 2019-06-08
 %
