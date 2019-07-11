@@ -13,6 +13,8 @@
 % + Stored R,G,B pixel brightness of each masked object in Vox.RawBright
 % + inspectPhoto fixed redraw glitches when mouse is closed to img border
 % + Common framework to store / train / test neura networks
+% + Design NeuralNet architecture using Deep Network Designer
+% + Import NeuralNet layers from base workspace into selected NeuralNet
 %
 % Version 1.2 - created on 2019-06-08
 %
