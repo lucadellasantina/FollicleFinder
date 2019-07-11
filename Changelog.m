@@ -3,7 +3,7 @@
 %
 %% ChangeLog
 %
-% Version 2.0 alpha - created on 2019-07-10
+% Version 2.0 alpha - created on 2019-07-11
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding
@@ -12,6 +12,7 @@
 % + Removed tarsal duct detection (need to use different method to calib)
 % + Stored R,G,B pixel brightness of each masked object in Vox.RawBright
 % + inspectPhoto fixed redraw glitches when mouse is closed to img border
+% + Common framework to store / train / test neura networks
 %
 % Version 1.2 - created on 2019-06-08
 %
