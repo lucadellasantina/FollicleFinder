@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2886265675" file="/home/luca/Dropbox/MATLAB scripts/FollicleFinder/Follicle Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/FollicleFinder" name="Follicle Finder" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="3582729849" file="/home/luca/Dropbox/MATLAB scripts/FollicleFinder/Follicle Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/FollicleFinder" name="Follicle Finder" target="target.mlapps" target-name="Package App">
     <param.appname>Follicle Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
@@ -12,8 +12,8 @@
     </param.icons>
     <param.summary>Identify trachomatous follicles in eyelid photos</param.summary>
     <param.description>Copyright 2019 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tpac8b8718_6b88_44e2_a7bd_113a606c792a.png</param.screenshot>
-    <param.version>1.9.8</param.version>
+    <param.screenshot>/tmp/tp26277c28_087f_4548_90e2_c36db4b013d6.png</param.screenshot>
+    <param.version>1.9.10</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Image Processing Toolbox</item>
@@ -42,6 +42,7 @@
     <fileset.depfun>
       <file>${PROJECT_ROOT}/deleteNeuralNet.m</file>
       <file>${PROJECT_ROOT}/deleteTraining.m</file>
+      <file>${PROJECT_ROOT}/editStruct.m</file>
       <file>${PROJECT_ROOT}/findObjects2D.m</file>
       <file>${PROJECT_ROOT}/generateUID.m</file>
       <file>${PROJECT_ROOT}/inpoly2.m</file>
