@@ -313,8 +313,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         ID = SelObjID;
 
         % Extract raw brightness levels (R,G,B) for each masked pixel
-        Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
-
+        if contains(Prefs.Type, 'Follicles')
+            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+        end
         lstDotsRefresh;
     end
 
@@ -344,8 +345,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
-            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
-        end        
+            if contains(Prefs.Type, 'Follicles')            
+                Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));        
+            end
+        end
     end
 
     function addPolyAreaToDot(xv, yv, ID)
@@ -372,7 +375,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
-            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+            if contains(Prefs.Type, 'Follicles')
+                Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+            end
         end 
         
         set(fig_handle, 'Pointer', oldPointer);
@@ -403,7 +408,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             [Dots.Vox(ID).Pos(:,1), Dots.Vox(ID).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(ID).Ind);            
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
-            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));            
+            if contains(Prefs.Type, 'Follicles')
+                Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));            
+            end
         end        
     end
 

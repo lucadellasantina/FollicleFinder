@@ -25,7 +25,7 @@ tblN = [];
 files = dir(NetFolder); % List the content of /Training folder
     files = files(~[files.isdir]);  % Keep only files, discard subfolders
     for d = 1:numel(files)
-        N = load([NetFolder filesep files(d).name]);
+        N = load([NetFolder filesep files(d).name], 'Name', 'Type', 'Model', 'Date', 'Trained', 'UID');
         if isempty(tblN)
             tblN = table({N.Name}, {N.Type}, {N.Model}, {N.Date}, N.Trained, {N.UID});
         else

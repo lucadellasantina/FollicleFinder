@@ -17,6 +17,7 @@
 % + Import NeuralNet layers from base workspace into selected NeuralNet
 % + Batch image resize tool
 % + Batch export eyelid masks
+% + Raw brightness values are not stored when segmenting eyelids
 %
 % Version 1.2 - created on 2019-06-08
 %

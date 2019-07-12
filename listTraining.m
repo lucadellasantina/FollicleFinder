@@ -25,7 +25,7 @@ tblT = [];
 files = dir(TrainingFolder); % List the content of /Training folder
     files = files(~[files.isdir]);  % Keep only files, discard subfolders
     for d = 1:numel(files)
-        T = load([TrainingFolder filesep files(d).name]);
+        T = load([TrainingFolder filesep files(d).name], 'User', 'ImagesFolder', 'Type', 'Date', 'UID', 'ImagesList', 'ImagesTODOFollicles', 'ImagesTODOEyelid');
         NumDone = ['F:' num2str(numel(T.ImagesList)-numel(T.ImagesTODOFollicles)) '/' num2str(numel(T.ImagesList))];
         NumDone = [NumDone ' E:' num2str(numel(T.ImagesList)-numel(T.ImagesTODOEyelid)) '/' num2str(numel(T.ImagesList))];
         if isempty(tblT)
