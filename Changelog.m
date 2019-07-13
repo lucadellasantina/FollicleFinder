@@ -18,6 +18,7 @@
 % + Batch image resize tool
 % + Batch export eyelid masks
 % + Raw brightness values are not stored when segmenting eyelids
+% + New Magic Wand tool adds new Follice based on color space difference
 %
 % Version 1.2 - created on 2019-06-08
 %

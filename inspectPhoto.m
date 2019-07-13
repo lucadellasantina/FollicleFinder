@@ -37,13 +37,13 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     pnlSettings     = uipanel(  'Title',''          ,'Units','normalized','Position',[.903,.005,.095,.99]); %#ok, unused variable
     txtValidObjs    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.940,.085,.02],'String',['Total: ' num2str(numel(find(Dots.Filter)))]);
     txtAction       = uicontrol('Style','text'      ,'Units','normalized','position',[.912,.905,.020,.02],'String','Tool:'); %#ok, unused handle
-    cmbAction       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Add (a)', 'Refine (r)','Select (s)', 'Enclose(e)'},'Callback', @cmbAction_changed);
+    cmbAction       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Add (a)', 'Refine (r)','Select (s)', 'Enclose(e)', 'Magic wand(m)'},'Callback', @cmbAction_changed);
     chkShowObjects  = uicontrol('Style','checkbox'  ,'Units','normalized','position',[.912,.870,.085,.02],'String','Show (spacebar)', 'Value',1,'Callback',@chkShowObjects_changed);
     lstDots         = uicontrol('Style','listbox'   ,'Units','normalized','position',[.907,.600,.085,.25],'String',[],'Callback',@lstDots_valueChanged);
     txtZoom         = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.320,.050,.02],'String','Zoom level:'); %#ok, unused variable
     btnZoomOut      = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.260,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
     btnZoomIn       = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.260,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
-    txtScores       = uicontrol('Style','text'      ,'Units','normalized','position',[.905,.220,.090,.02],'String','Scores:'); %#ok, unused variable
+    btnScores       = uicontrol('Style','Pushbutton','Units','normalized','position',[.905,.220,.090,.03],'String','Trachoma scoring', 'Callback', @btnScores_clicked); %#ok, unused variable
     cmbScoreF       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.910,.170,.025,.04],'String', {'F0','F1','F2','F3'}, 'Callback',@cmbScoreF_changed);
     cmbScoreP       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.940,.170,.025,.04],'String', {'P0','P1','P2','P3'}, 'Callback',@cmbScoreP_changed);
     cmbScoreC       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.970,.170,.025,.04],'String', {'C0','C1','C2','C3'}, 'Callback',@cmbScoreC_changed);
@@ -94,21 +94,61 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         closeRequest(src,event);
     end
 
+    function btnScores_clicked(~, ~)
+        info        = {'## Scoring notation:'};
+        info{end+1} = ' ';
+        info{end+1} = 'Follices (hallmark of TF):';
+        info{end+1} = 'F0 = No follicles, F1 = 1-4 follicles';      
+        info{end+1} = 'F2 = 5-9 follicles F3 = 10+ follicles';      
+        info{end+1} = ' ';
+        info{end+1} = 'Papillary hypertrophy and diffused infiltration (hallmark of TI):';
+        info{end+1} = 'P0 = No papillae, P1 = some papillae';      
+        info{end+1} = 'P2 = up to half vessels hazy P3 = half+ vessels hazy due to inflammation';      
+        info{end+1} = ' ';
+        info{end+1} = 'Conjunctival scarring, as sign of TS <--';
+        info{end+1} = 'C0 = No scarring, C1 = some hard to see scars';              
+        info{end+1} = 'C2 = easily visible scars C3 = sheets of scarring';              
+        info{end+1} = ' ';
+        info{end+1} = 'Trichiasis/entropion (hallmark of TT):';
+        info{end+1} = 'TE0 = Normal eyelid, TE1 = abnormal eyelash';              
+        info{end+1} = 'TE2 = eyelash touching cornea TE3 = eyelid turned inward';              
+        info{end+1} = ' ';
+        info{end+1} = 'Corneal opacity (hallmark of CO)';        
+        info{end+1} = 'CO0 = Normal cornea, CO1 = opacity ouside pupil';              
+        info{end+1} = 'CO2 = opacity partially over pupil CO3 = opacity over pupil';              
+        info{end+1} = ' ';
+        info{end+1} = '## Diagnosis notation:';        
+        info{end+1} = ' ';
+        info{end+1} = 'TNormal = Absence of hallmarks to positively diagnose trachoma';
+        info{end+1} = 'TF = Tracomatous Inflammation - Follicular';
+        info{end+1} = 'TI = Trachomatous inflammation - Intense';
+        info{end+1} = 'TF+TI = combination of the two above';
+        info{end+1} = 'TS = Trachomatous scarring';
+        info{end+1} = 'TT = Trachomatous trichiasis';
+        info{end+1} = 'CO = Corneal opacity';
+
+        CreateStruct.Interpreter = 'tex';
+        CreateStruct.WindowStyle = 'modal';
+        msgbox(info, 'Trachoma scoring info', CreateStruct);
+    end
+
     function cmbAction_changed(src,event) %#ok, unused parameters
         switch get(src,'Value')
             case 1, actionType = 'Add';                
             case 2, actionType = 'Refine';
             case 3, actionType = 'Select';
             case 4, actionType = 'Enclose';
+            case 5, actionType = 'MagicWand';
         end
     end
 
     function cmbAction_assign(newType)
         switch newType
-            case 'Add',     set(cmbAction, 'Value', 1);                
-            case 'Refine',  set(cmbAction, 'Value', 2);
-            case 'Select',  set(cmbAction, 'Value', 3);
-            case 'Enclose', set(cmbAction, 'Value', 4);
+            case 'Add',         set(cmbAction, 'Value', 1);                
+            case 'Refine',      set(cmbAction, 'Value', 2);
+            case 'Select',      set(cmbAction, 'Value', 3);
+            case 'Enclose',     set(cmbAction, 'Value', 4);
+            case 'MagicWand',   set(cmbAction, 'Value', 5);
         end
     end
 
@@ -319,6 +359,51 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         lstDotsRefresh;
     end
 
+    function ID = addDotMagicWand(X, Y, D)
+        % Creates a new object #ID from pixels within R radius
+        % X,Y: center coordinates, R: radius in zoomed region pixels 
+
+        oldPointer = get(fig_handle, 'Pointer');
+        set(fig_handle, 'Pointer', 'watch'); pause(0.3);
+        
+        % Convert radius from zoomed to image units region scaling factor
+        ZoomFactor = size(Img,1) / CutNumVox(1);
+        r = D / ZoomFactor /2;
+        
+        % Create a circular mask around the pixel [xc,yc] of radius r
+        [x, y] = meshgrid(1:size(Img,2), 1:size(Img,1));
+        mask = (x-X).^2 + (y-Y).^2 < r^2;
+
+        % Use pixels within circle as reference for the magic wand
+        ind = find(mask);
+        [lstX, lstY] = ind2sub(size(Img),ind);
+        mask = magicwand2(Img, 10, lstX, lstY); 
+        
+        % Generate statistics of the new dot and add to Dots
+        if isempty(Dots.Pos)
+            Dots.Pos(1,:)       = [X,Y];            
+            Dots.Vox(1).Ind     = find(mask);
+            [Dots.Vox(1).Pos(:,1), Dots.Vox(1).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(1).Ind);            
+            Dots.Filter         = 1;
+        else
+            Dots.Pos(end+1,:)   = [X,Y];
+            Dots.Vox(end+1).Ind = find(mask);
+            [Dots.Vox(end).Pos(:,1), Dots.Vox(end).Pos(:,2)] = ind2sub(size(Img), Dots.Vox(end).Ind);            
+            Dots.Filter(end+1)  = 1;
+        end 
+                
+        SelObjID = numel(Dots.Filter);
+        ID = SelObjID;
+
+        % Extract raw brightness levels (R,G,B) for each masked pixel
+        if contains(Prefs.Type, 'Follicles')
+            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+        end
+        lstDotsRefresh;
+        
+        set(fig_handle, 'Pointer', oldPointer);        
+    end
+
     function addPxToDot(X, Y, R, ID)
         % Adds pixels within R radius to object #ID
         % X,Y: center coordinates, R: radius in zoomed region pixels 
@@ -460,7 +545,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 cmbAction_changed(cmbAction, event);
             case 'e'
                 set(cmbAction, 'Value', 4); 
-                cmbAction_changed(cmbAction, event);                
+                cmbAction_changed(cmbAction, event);
+            case 'm'
+                set(cmbAction, 'Value', 5); 
+                cmbAction_changed(cmbAction, event);
             case 'd'
                 btnDelete_clicked();
             case {'leftarrow'}
@@ -574,7 +662,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                         [PCData, PHotSpot] = getPointerCrosshair;
                         set(fig_handle, 'Pointer', 'custom', 'PointerShapeCData', PCData, 'PointerShapeHotSpot', PHotSpot);
                         if isvalid(brush), delete(brush); end 
-                    case {'Add', 'Refine'}
+                    case {'Add', 'Refine', 'MagicWand'}
                         % Display a circle if we are in the right panel
                         set(fig_handle, 'pointer', 'custom', 'PointerShapeCData', NaN(16,16));
                         PosZoom = [-1, -1];
@@ -644,7 +732,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 if strcmp(clickType, 'alt')
                     % User RIGHT-clicked in the right panel (zoomed region)
                     switch actionType
-                            case {'Add', 'Select', 'Enclose'}
+                            case {'Add', 'Select', 'Enclose', 'MagicWand'}
                                 % Locate position of points in respect to zoom area
                                 PosZoomX = PosX - size(Img,2)-1;
                                 PosZoomX = round(PosZoomX * CutNumVox(2)/(size(Img,2)-1));                
@@ -740,7 +828,12 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                     animatedLine = animatedline('LineWidth', 1, 'Color', 'blue');
                                 else
                                     addpoints(animatedLine, PosX, PosY); 
-                                end 
+                                end
+                            case 'MagicWand'
+                                % Create a new Dot using magicwand2
+                                ZoomFactor = size(Img,1) / CutNumVox(1);
+                                brushSizeScaled = brushSize * ZoomFactor;                                
+                                addDotMagicWand(absX, absY, brushSizeScaled);                                
                         end
                     end
                 end
