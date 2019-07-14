@@ -20,7 +20,8 @@
 function Dots = inspectPhoto(Img, Dots, Prefs)
     % Default parameter values
     CutNumVox   = ceil(size(Img)/Prefs.Zoom); % Size of zoomed region    
-    Pos         = [ceil(size(Img,2)/2), ceil(size(Img,1)/2)]; % Initial mouse position
+    PosMouse    = [0,0]; % mouse pointer position in screen coordinates
+    Pos         = [ceil(size(Img,2)/2), ceil(size(Img,1)/2)]; %  mouse position in image coordinates
     PosRect     = [ceil(size(Img,2)/2-CutNumVox(2)/2), ceil(size(Img,1)/2-CutNumVox(1)/2)]; % Initial position of zoomed rectangle (top-left vertex)
     PosZoom     = [-1, -1]; % Mouse position inside the zoomed area
 	click       = false;    % Initialize click status
@@ -105,7 +106,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         info{end+1} = 'P0 = No papillae, P1 = some papillae';      
         info{end+1} = 'P2 = up to half vessels hazy P3 = half+ vessels hazy due to inflammation';      
         info{end+1} = ' ';
-        info{end+1} = 'Conjunctival scarring, as sign of TS <--';
+        info{end+1} = 'Conjunctival scarring (hallmark of TS)';
         info{end+1} = 'C0 = No scarring, C1 = some hard to see scars';              
         info{end+1} = 'C2 = easily visible scars C3 = sheets of scarring';              
         info{end+1} = ' ';
@@ -518,15 +519,34 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         refreshBothPanels;
     end
 
-    function wheel_scroll(src, event)
-          if event.VerticalScrollCount < 0              
-              brushSize = brushSize +1;
-          elseif event.VerticalScrollCount > 0             
-              brushSize = brushSize -1;
-              if brushSize < 1, brushSize = 1; end
-          end
-          click = false;
-          on_click(src, event);
+    function wheel_scroll(~, event)
+        switch actionType
+            case {'Add', 'Refine', 'MagicWand'}
+                
+                if event.VerticalScrollCount < 0
+                    brushSize = brushSize +1;
+                elseif event.VerticalScrollCount > 0
+                    brushSize = brushSize -1;
+                end
+                
+                if brushSize < 1
+                    brushSize = 1;
+                end
+                
+                % Adjust brush to the new size and redraw it onscreen
+                ZoomFactor = size(Img,1) / CutNumVox(1);                
+                brushSizeScaled = brushSize * ZoomFactor;
+                PosXfenced = max(brushSizeScaled/2, min(PosMouse(1)-brushSizeScaled/2, size(Img,2)*2-brushSizeScaled-2));
+                PosYfenced = max(brushSizeScaled/2, min(PosMouse(2)-brushSizeScaled/2, size(Img,1)*2-brushSizeScaled-2));
+                brushPos = [PosXfenced, PosYfenced, brushSizeScaled, brushSizeScaled];
+                
+                if ~isvalid(brush)
+                    brush = rectangle(axes_handle,'Position', brushPos,'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
+                else
+                    set(brush, 'Position',  brushPos);
+                end
+                click = false;
+        end
     end
     
     function key_press(src, event) %#ok missing parameters
@@ -637,12 +657,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
 	function on_click(src, event)  %#ok, unused arguments
         if ~click
+            % ** User moved the mouse without clicking anywhere **
+
             % Set the proper mouse pointer appearance
             set(fig_handle, 'Units', 'pixels');
             click_point = get(gca, 'CurrentPoint');
             PosX = ceil(click_point(1,1));
             PosY = ceil(click_point(1,2));
-            
+                        
             if PosY < 0 || PosY > size(Img,1)-brushSize
                 % Display the default arrow everywhere else
                 set(fig_handle, 'Pointer', 'arrow');
@@ -664,21 +686,24 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                         if isvalid(brush), delete(brush); end 
                     case {'Add', 'Refine', 'MagicWand'}
                         % Display a circle if we are in the right panel
-                        set(fig_handle, 'pointer', 'custom', 'PointerShapeCData', NaN(16,16));
-                        PosZoom = [-1, -1];
+                        set(fig_handle, 'pointer', 'custom', 'PointerShapeCData', NaN(16,16));                    
 
                         % Recreate the brush because frame is redrawn otherwise
                         % just redraw the brush in the new location
                         ZoomFactor = size(Img,1) / CutNumVox(1);
+                        
                         brushSizeScaled = brushSize * ZoomFactor;
                         PosXfenced = max(brushSizeScaled/2, min(PosX-brushSizeScaled/2, size(Img,2)*2-brushSizeScaled-2));
                         PosYfenced = max(brushSizeScaled/2, min(PosY-brushSizeScaled/2, size(Img,1)*2-brushSizeScaled-2)); 
                         brushPos = [PosXfenced, PosYfenced, brushSizeScaled, brushSizeScaled];
+                        PosMouse = [PosX, PosY];
+%                         disp(['X:' num2str(PosX) ' brushX:' num2str(brushPos(1)) ' Y:' num2str(PosY) ' brushY:' num2str(brushPos(2)) ' brushSize:' num2str(brushSizeScaled)]);
+
                         if ~isvalid(brush)  
                             brush = rectangle(axes_handle,'Position', brushPos,'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
                         else
                             set(brush, 'Position',  brushPos);
-                        end
+                        end                        
                 end
             else
                 % Display the default arrow everywhere else
@@ -692,6 +717,8 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             click_point = get(gca, 'CurrentPoint');
             PosX = ceil(click_point(1,1));
             PosY = ceil(click_point(1,2));
+            PosMouse = [PosX, PosY];
+            
             if PosX <= size(Img,2)
                 % ** User clicked in the Left panel (image navigator) **
                 % Mozed the zoomed region to that center point
@@ -715,18 +742,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 
                 PosZoomY = size(Img,2) - PosY;
                 PosZoomY = CutNumVox(1)-round(PosZoomY*CutNumVox(1)/(size(Img,1)-1));
-                
-                ZoomFactor = size(Img,1) / CutNumVox(1);
-                brushSizeScaled = brushSize * ZoomFactor;
-                PosXfenced = max(brushSizeScaled/2, min(PosX-brushSizeScaled/2, size(Img,2)*2-brushSizeScaled-2));
-                PosYfenced = max(brushSizeScaled/2, min(PosY-brushSizeScaled/2, size(Img,1)*2-brushSizeScaled-2));
-                brushPos = [PosXfenced, PosYfenced, brushSizeScaled, brushSizeScaled];
-                if ~isvalid(brush)
-                    brush = rectangle(axes_handle,'Position', brushPos,'Curvature',[1 1],'EdgeColor',[1 1 0],'LineWidth',2,'LineStyle','-');
-                else
-                    set(brush, 'Position',  brushPos);
-                end
-                
+
                 % Do different things depending whether left/right-clicked
                 clickType = get(fig_handle, 'SelectionType');                                
                 if strcmp(clickType, 'alt')
@@ -748,6 +764,8 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                 
                             case 'Refine'
                                 % Remove selected pixels from Dot #ID
+                                if isvalid(brush), delete(brush); end
+                                
                                 PosZoom = [PosZoomX, PosZoomY];
                                 Pos     = [Pos(1), Pos(2)];
 
@@ -796,6 +814,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                 addDot(absX, absY, brushSizeScaled);                                
                             case 'Refine'
                                 % Add selected pixels to Dot #ID
+                                if isvalid(brush), delete(brush); end
                                 if ~isvalid(animatedLine)
                                     ZoomFactor = size(Img,1) / CutNumVox(1);
                                     brushSizeScaled = brushSize * ZoomFactor;                                      

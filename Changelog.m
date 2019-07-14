@@ -3,7 +3,7 @@
 %
 %% ChangeLog
 %
-% Version 2.0 alpha - created on 2019-07-12
+% Version 2.0 alpha - created on 2019-07-13
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding
@@ -19,6 +19,8 @@
 % + Batch export eyelid masks
 % + Raw brightness values are not stored when segmenting eyelids
 % + New Magic Wand tool adds new Follice based on color space difference
+% + Fixed mismatch cursor position when using mouse wheel to change brush
+% + Hid brush when using refine tool
 %
 % Version 1.2 - created on 2019-06-08
 %
