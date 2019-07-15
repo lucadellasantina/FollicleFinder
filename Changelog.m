@@ -21,6 +21,8 @@
 % + New Magic Wand tool adds new Follice based on color space difference
 % + Fixed mismatch cursor position when using mouse wheel to change brush
 % + Hid brush when using refine tool
+% + Tool: Save individual follicles as TIF images
+% + Tool: Create follicles mask as TIF images
 %
 % Version 1.2 - created on 2019-06-08
 %
