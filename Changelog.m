@@ -15,14 +15,15 @@
 % + Common framework to store / train / test neura networks
 % + Design NeuralNet architecture using Deep Network Designer
 % + Import NeuralNet layers from base workspace into selected NeuralNet
-% + Batch image resize tool
-% + Batch export eyelid masks
 % + Raw brightness values are not stored when segmenting eyelids
 % + New Magic Wand tool adds new Follice based on color space difference
 % + Fixed mismatch cursor position when using mouse wheel to change brush
 % + Hid brush when using refine tool
+% + Tool: batch image resize tool
+% + Tool: Create eyelid masks as TIF images
 % + Tool: Save individual follicles as TIF images
 % + Tool: Create follicles mask as TIF images
+% + Tool: Save follicle bounding box coordinates into excel tables
 % + Tool: Relink images folder to a new location
 % + Export copy of selected Training / NeuralNet to a custom folder
 % + Import saved training file into the local repository
