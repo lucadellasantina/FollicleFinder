@@ -3,7 +3,7 @@
 %
 %% ChangeLog
 %
-% Version 2.0 alpha - created on 2019-07-13
+% Version 2.0 alpha - created on 2019-07-15
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding
@@ -23,8 +23,9 @@
 % + Hid brush when using refine tool
 % + Tool: Save individual follicles as TIF images
 % + Tool: Create follicles mask as TIF images
-% + Export copy of selected Training / NeuralNet to a custom folder
 % + Tool: Relink images folder to a new location
+% + Export copy of selected Training / NeuralNet to a custom folder
+% + Import saved training file into the local repository
 % + Fixed calculation of animatedline thickness
 %
 % Version 1.2 - created on 2019-06-08
