@@ -23,6 +23,9 @@
 % + Hid brush when using refine tool
 % + Tool: Save individual follicles as TIF images
 % + Tool: Create follicles mask as TIF images
+% + Export copy of selected Training / NeuralNet to a custom folder
+% + Tool: Relink images folder to a new location
+% + Fixed calculation of animatedline thickness
 %
 % Version 1.2 - created on 2019-06-08
 %

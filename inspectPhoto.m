@@ -783,7 +783,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                     if ~isvalid(animatedLine)
                                         ZoomFactor = size(Img,1) / CutNumVox(1);
                                         brushSizeScaled = brushSize * ZoomFactor;                                        
-                                        animatedLine = animatedline('LineWidth', brushSizeScaled/2, 'Color', 'red');
+                                        animatedLine = animatedline('LineWidth', brushSizeScaled/(2*pi), 'Color', 'red');
                                     else
                                         addpoints(animatedLine, PosX, PosY); 
                                     end                                     
@@ -818,7 +818,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                                 if ~isvalid(animatedLine)
                                     ZoomFactor = size(Img,1) / CutNumVox(1);
                                     brushSizeScaled = brushSize * ZoomFactor;                                      
-                                    animatedLine = animatedline('LineWidth', brushSizeScaled/2, 'Color', 'blue');
+                                    animatedLine = animatedline('LineWidth', brushSizeScaled/(2*pi), 'Color', 'blue');
                                 else
                                     addpoints(animatedLine, PosX, PosY); 
                                 end 
