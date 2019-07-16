@@ -27,6 +27,7 @@
 % + Export copy of selected Training / NeuralNet to a custom folder
 % + Import saved training file into the local repository
 % + Fixed calculation of animatedline thickness
+% + Fixed error calculating PosRect when using ZoomIn/Out buttons
 %
 % Version 1.2 - created on 2019-06-08
 %

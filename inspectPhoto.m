@@ -505,17 +505,17 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
     function btnZoomOut_clicked(src, event) %#ok, unused arguments
-        ImSize = [size(Img,1), size(Img,2)];
-        CutNumVox = [min(CutNumVox(1)*2, ImSize(1)), min(CutNumVox(2)*2, ImSize(2))];
-        PosRect   = [ceil(size(Img,2)/2-CutNumVox(2)/2), ceil(size(Img,1)/2-CutNumVox(1)/2)]; % Initial position of zoomed rectangle (top-left vertex)        
-        PosZoom   = [-1, -1];
+        ImSize      = [size(Img,1), size(Img,2)];
+        CutNumVox   = [min(CutNumVox(1)*2, ImSize(1)), min(CutNumVox(2)*2, ImSize(2))];
+        PosRect     = [max(1,Pos(1)-CutNumVox(2)/2), max(1,Pos(2)-CutNumVox(1)/2)];
+        PosZoom     = [-1, -1];
         refreshBothPanels;
     end
 
     function btnZoomIn_clicked(src, event) %#ok, unused arguments
-        CutNumVox = [max(round(CutNumVox(1)/2,0), 32), max(round(CutNumVox(2)/2,0),32)];
-        PosRect   = [ceil(size(Img,2)/2-CutNumVox(2)/2), ceil(size(Img,1)/2-CutNumVox(1)/2)]; % Initial position of zoomed rectangle (top-left vertex)        
-        PosZoom   = [-1, -1];
+        CutNumVox   = [max(round(CutNumVox(1)/2,0), 32), max(round(CutNumVox(2)/2,0),32)];
+        PosRect     = [max(1,Pos(1)-CutNumVox(2)/2), max(1,Pos(2)-CutNumVox(1)/2)];
+        PosZoom     = [-1, -1];
         refreshBothPanels;
     end
 
