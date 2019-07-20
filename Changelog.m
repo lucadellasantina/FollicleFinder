@@ -3,7 +3,7 @@
 %
 %% ChangeLog
 %
-% Version 2.0 alpha - created on 2019-07-17
+% Version 2.0 alpha - created on 2019-07-19
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding
@@ -30,6 +30,7 @@
 % + Fixed calculation of animatedline thickness
 % + Fixed error calculating PosRect when using ZoomIn/Out buttons
 % + validatePath methods provides platform independent path validation
+% + Refresh table button always available at bottom left corner of the UI
 %
 % Version 1.2 - created on 2019-06-08
 %
