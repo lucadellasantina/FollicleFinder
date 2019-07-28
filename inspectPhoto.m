@@ -51,7 +51,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     cmbScoreTE      = uicontrol('Style','popup'     ,'Units','normalized','Position',[.915,.125,.030,.04],'String', {'T/E0','T/E1','T/E2','T/E3'}, 'Callback',@cmbScoreTE_changed);
     cmbScoreCC      = uicontrol('Style','popup'     ,'Units','normalized','Position',[.955,.125,.030,.04],'String', {'CC0','CC1','CC2','CC3'}, 'Callback',@cmbScoreCC_changed);
     txtDiagnosis    = uicontrol('Style','text'      ,'Units','normalized','position',[.905,.095,.045,.02],'String','Diagnosis:'); %#ok, unused variable
-    cmbDiagnosis    = uicontrol('Style','popup'     ,'Units','normalized','Position',[.950,.080,.045,.04],'String', {'TNormal','TF','TI', 'TF+TI','TS','TT','CO'},'Callback', @cmbDiagnosis_changed);
+    cmbDiagnosis    = uicontrol('Style','popup'     ,'Units','normalized','Position',[.950,.080,.045,.04],'String', {'TNormal','TF','TI', 'TF+TI','TS','TT','CO', 'Ungradable'},'Callback', @cmbDiagnosis_changed);
     btnSave         = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.020,.088,.05],'String','Done','Callback',@btnSave_clicked); %#ok, unused variable    
     
     % Selected object info
@@ -219,18 +219,20 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             case 5, Dots.Diagnosis = 'TS';
             case 6, Dots.Diagnosis = 'TT';
             case 7, Dots.Diagnosis = 'CO';
+            case 8, Dots.Diagnosis = 'Ungradable';
         end
     end
 
     function cmbDiagnosis_assign(newDiagnosis)
         switch newDiagnosis
-            case 'TNormal', set(cmbDiagnosis, 'Value', 1);                
-            case 'TF',      set(cmbDiagnosis, 'Value', 2);
-            case 'TI',      set(cmbDiagnosis, 'Value', 3);
-            case 'TF+TI',   set(cmbDiagnosis, 'Value', 4);
-            case 'TS',      set(cmbDiagnosis, 'Value', 5);
-            case 'TT',      set(cmbDiagnosis, 'Value', 6);
-            case 'CO',      set(cmbDiagnosis, 'Value', 7);
+            case 'TNormal',     set(cmbDiagnosis, 'Value', 1);                
+            case 'TF',          set(cmbDiagnosis, 'Value', 2);
+            case 'TI',          set(cmbDiagnosis, 'Value', 3);
+            case 'TF+TI',       set(cmbDiagnosis, 'Value', 4);
+            case 'TS',          set(cmbDiagnosis, 'Value', 5);
+            case 'TT',          set(cmbDiagnosis, 'Value', 6);
+            case 'CO',          set(cmbDiagnosis, 'Value', 7);
+            case 'Ungradable',  set(cmbDiagnosis, 'Value', 8);
         end
     end
 

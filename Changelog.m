@@ -3,7 +3,7 @@
 %
 %% ChangeLog
 %
-% Version 2.0 alpha - created on 2019-07-19
+% Version 2.0 beta - created on 2019-07-27
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding
@@ -25,12 +25,15 @@
 % + Tool: Create follicles mask as TIF images
 % + Tool: Save follicle bounding box coordinates into excel tables
 % + Tool: Relink images folder to a new location
+% + Tool: Merge records
 % + Export copy of selected Training / NeuralNet to a custom folder
 % + Import saved training file into the local repository
 % + Fixed calculation of animatedline thickness
 % + Fixed error calculating PosRect when using ZoomIn/Out buttons
 % + validatePath methods provides platform independent path validation
 % + Refresh table button always available at bottom left corner of the UI
+% + Handle multiple record selection in table
+% + Added "ungradable" among diagnosis values when photo quality too low
 %
 % Version 1.2 - created on 2019-06-08
 %
