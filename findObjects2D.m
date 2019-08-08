@@ -45,6 +45,7 @@ minIntensity     = Settings.objfinder.minIntensity;
 % Scan volume to find areas crossing contrast threshold with progressively coarser intensity filter
 % Iterating from Gmax to noise level (Gmode+1) within each block
 for i = Gmax :-1: ceil(Gmode * minIntensity)+1
+%for i = ceil(Gmode * minIntensity)+1
     
     % Label all areas in the block (Igl) that crosses the intensity "i"
     % bwconncomp+labelmatrix is ~10% faster than using bwlabeln

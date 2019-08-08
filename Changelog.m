@@ -36,6 +36,10 @@
 % + Handle multiple record selection in table
 % + Added "ungradable" among diagnosis values when photo quality too low
 % + Duplicate selected training recor
+% + Automatic detection - Detect eyelid 
+% + Import neural network from file
+% + Consistent use of word photos across the application
+% + Automatic follicle detection does NOT shuffle filenames order
 %
 % Version 1.2 - created on 2019-06-08
 %
