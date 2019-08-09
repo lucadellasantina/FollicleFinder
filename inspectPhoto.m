@@ -407,7 +407,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
         % Extract raw brightness levels (R,G,B) for each masked pixel
         if contains(Prefs.Type, 'Follicles')
-            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+            %Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+            Dots.Vox(ID).RawBright = Ir(Dots.Vox(ID).Ind);
+            Dots.Vox(ID).RawBright(:,2) = Ig(Dots.Vox(ID).Ind);
+            Dots.Vox(ID).RawBright(:,3) = Ib(Dots.Vox(ID).Ind);            
         end
         lstDotsRefresh;
         
@@ -441,7 +444,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
             if contains(Prefs.Type, 'Follicles')            
-                Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));        
+                %Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1))); 
+                Dots.Vox(ID).RawBright = Ir(Dots.Vox(ID).Ind);
+                Dots.Vox(ID).RawBright(:,2) = Ig(Dots.Vox(ID).Ind);
+                Dots.Vox(ID).RawBright(:,3) = Ib(Dots.Vox(ID).Ind);                
             end
         end
     end
@@ -471,7 +477,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
             if contains(Prefs.Type, 'Follicles')
-                Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+                %Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+                Dots.Vox(ID).RawBright = Ir(Dots.Vox(ID).Ind);
+                Dots.Vox(ID).RawBright(:,2) = Ig(Dots.Vox(ID).Ind);
+                Dots.Vox(ID).RawBright(:,3) = Ib(Dots.Vox(ID).Ind);                
             end
         end 
         
@@ -504,7 +513,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
             % Extract raw brightness levels (R,G,B) for each masked pixel
             if contains(Prefs.Type, 'Follicles')
-                Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));            
+                % Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+                Dots.Vox(ID).RawBright = Ir(Dots.Vox(ID).Ind);
+                Dots.Vox(ID).RawBright(:,2) = Ig(Dots.Vox(ID).Ind);
+                Dots.Vox(ID).RawBright(:,3) = Ib(Dots.Vox(ID).Ind);                
             end
         end        
     end
