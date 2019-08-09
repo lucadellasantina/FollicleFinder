@@ -17,10 +17,10 @@
 %  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 %
 
-function Dots = findObjects2D(Img, Settings)
+function Dots = findObjects2D(I, Settings)
 %% -- STEP 1: Estimate background level and initialize variables
 
-Img = rgb2gray(Img(:,:,1:3)); %Convert the image to BW from RGB by averaging
+Img = rgb2gray(I(:,:,1:3)); %Convert the image to BW from RGB by averaging
 
 % Estimate either background level (Gmode) according to setting
 switch Settings.objfinder.noiseEstimator
@@ -132,7 +132,7 @@ tmpDot               = struct;
 tmpDot.Pos           = [0,0];
 tmpDot.Vox.Pos       = 0;
 tmpDot.Vox.Ind       = 0;
-tmpDot.Vox.RawBright = 0;
+tmpDot.Vox.RawBright = [0 0 0];
 tmpDot.Vox.MeanBright= 0;
 tmpDot.Vox.IT        = 0;
 tmpDot.Vox.ITMax     = 0;
@@ -178,7 +178,10 @@ for i = 1:nLabels
         tmpDot.Pos          = [yPeak, xPeak];
         tmpDot.Vox.Pos      = [yPos,  xPos];
         tmpDot.Vox.Ind      = Voxels;
-        tmpDot.Vox.RawBright= Img(Voxels);
+        for k = 1:size(tmpDot.Vox.Pos, 1)
+        	tmpDot.Vox.RawBright(k, :) = I(tmpDot.Vox.Pos(k,1), tmpDot.Vox.Pos(k,2),:); 
+        end
+        %tmpDot.Vox.RawBright= I(yPos,  xPos, :);
         tmpDot.Vol          = size(unique(tmpDot.Vox.Pos(:, 1:2), 'rows'),1); % Use only X,Y data to measure how many pixels (3rd dimension = color)
         tmpDot.Vox.IT       = thresholdMap(Voxels);
         
