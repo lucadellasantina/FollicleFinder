@@ -40,6 +40,7 @@
 % + Import neural network from file
 % + Consistent use of word photos across the application
 % + Automatic follicle detection does NOT shuffle filenames order
+% + Faster RGB values extraction in inspectPhoto and findObject2D
 %
 % Version 1.2 - created on 2019-06-08
 %

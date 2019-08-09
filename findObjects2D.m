@@ -19,7 +19,9 @@
 
 function Dots = findObjects2D(I, Settings)
 %% -- STEP 1: Estimate background level and initialize variables
-
+Ir = I(:,:,1);
+Ig = I(:,:,2);
+Ib = I(:,:,3);
 Img = rgb2gray(I(:,:,1:3)); %Convert the image to BW from RGB by averaging
 
 % Estimate either background level (Gmode) according to setting
@@ -132,7 +134,7 @@ tmpDot               = struct;
 tmpDot.Pos           = [0,0];
 tmpDot.Vox.Pos       = 0;
 tmpDot.Vox.Ind       = 0;
-tmpDot.Vox.RawBright = [0 0 0];
+tmpDot.Vox.RawBright = [0, 0, 0];
 tmpDot.Vox.MeanBright= 0;
 tmpDot.Vox.IT        = 0;
 tmpDot.Vox.ITMax     = 0;
@@ -178,10 +180,12 @@ for i = 1:nLabels
         tmpDot.Pos          = [yPeak, xPeak];
         tmpDot.Vox.Pos      = [yPos,  xPos];
         tmpDot.Vox.Ind      = Voxels;
-        for k = 1:size(tmpDot.Vox.Pos, 1)
-        	tmpDot.Vox.RawBright(k, :) = I(tmpDot.Vox.Pos(k,1), tmpDot.Vox.Pos(k,2),:); 
-        end
-        %tmpDot.Vox.RawBright= I(yPos,  xPos, :);
+
+        % tmpDot.Vox.RawBright= uint8(impixel(I, yPos, xPos)); % very slow
+        tmpDot.Vox.RawBright = Ir(Voxels);
+        tmpDot.Vox.RawBright(:,2) = Ig(Voxels);
+        tmpDot.Vox.RawBright(:,3) = Ib(Voxels);
+        
         tmpDot.Vol          = size(unique(tmpDot.Vox.Pos(:, 1:2), 'rows'),1); % Use only X,Y data to measure how many pixels (3rd dimension = color)
         tmpDot.Vox.IT       = thresholdMap(Voxels);
         
@@ -206,7 +210,6 @@ for i = numel(ValidDots):-1:1
     Dots.Vox(i).IT          = tmpDots(ValidDots(i)).Vox.IT;
     Dots.Vox(i).ITMax       = max(tmpDots(ValidDots(i)).Vox.IT);
     Dots.Vox(i).ITSum       = sum(tmpDots(ValidDots(i)).Vox.IT);
-	Dots.Vox(i).MeanBright  = mean(tmpDots(ValidDots(i)).Vox.RawBright);
     Dots.Vol(i)             = tmpDots(ValidDots(i)).Vol;
 end
 

@@ -18,6 +18,10 @@
 %
 
 function Dots = inspectPhoto(Img, Dots, Prefs)
+    Ir = Img(:,:,1);
+    Ig = Img(:,:,2);
+    Ib = Img(:,:,3);
+    
     % Default parameter values
     CutNumVox   = ceil(size(Img)/Prefs.Zoom); % Size of zoomed region    
     PosMouse    = [0,0]; % mouse pointer position in screen coordinates
@@ -357,7 +361,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
 
         % Extract raw brightness levels (R,G,B) for each masked pixel
         if contains(Prefs.Type, 'Follicles')
-            Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+            % Dots.Vox(ID).RawBright = uint8(impixel(Img, Dots.Vox(ID).Pos(:,2), Dots.Vox(ID).Pos(:,1)));
+            Dots.Vox(ID).RawBright = Ir(Dots.Vox(ID).Ind);
+            Dots.Vox(ID).RawBright(:,2) = Ig(Dots.Vox(ID).Ind);
+            Dots.Vox(ID).RawBright(:,3) = Ib(Dots.Vox(ID).Ind);
         end
         lstDotsRefresh;
     end
