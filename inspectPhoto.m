@@ -29,12 +29,16 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     PosRect     = [ceil(size(Img,2)/2-CutNumVox(2)/2), ceil(size(Img,1)/2-CutNumVox(1)/2)]; % Initial position of zoomed rectangle (top-left vertex)
     PosZoom     = [-1, -1]; % Mouse position inside the zoomed area
 	click       = false;    % Initialize click status
-    SelObjID    = 0;        % Initialize selected object ID#
+    if contains(Prefs.Type, 'Eyelid') && ~isempty(Dots.Filter)
+        SelObjID = 1;
+    else        
+        SelObjID    = 0;        % Initialize selected object ID#
+    end
     actionType  = Prefs.actionType; % Mode of operation
     analysisDone= false;    % Flag to determine if we should close the UI
 	
 	% Initialize GUI Figure window
-	fig_handle = figure('Name','Photo inspector (click locations on right panel to add follicles)','NumberTitle','off','Color',[.3 .3 .3], 'MenuBar','none', 'Units','norm', ...
+	fig_handle = figure('Name','Photo inspector (use right panel to define regions)','NumberTitle','off','Color',[.3 .3 .3], 'MenuBar','none', 'Units','norm', ...
 		'WindowButtonDownFcn',@button_down, 'WindowButtonUpFcn',@button_up, 'WindowButtonMotionFcn', @on_click, 'KeyPressFcn', @key_press,'windowscrollWheelFcn', @wheel_scroll, 'CloseRequestFcn', @closeRequest);
 
     % Add GUI conmponents
@@ -42,21 +46,27 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     pnlSettings     = uipanel(  'Title',''          ,'Units','normalized','Position',[.903,.005,.095,.99]); %#ok, unused variable
     txtValidObjs    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.940,.085,.02],'String',['Total: ' num2str(numel(find(Dots.Filter)))]);
     txtAction       = uicontrol('Style','text'      ,'Units','normalized','position',[.912,.905,.020,.02],'String','Tool:'); %#ok, unused handle
-    cmbAction       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Add (a)', 'Refine (r)','Select (s)', 'Enclose(e)', 'Magic wand(m)'},'Callback', @cmbAction_changed);
+    if contains(Prefs.Type, 'Eyelid')
+        cmbAction   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Refine (r)', 'Enclose(e)'},'Callback', @cmbAction_changed);
+    elseif contains(Prefs.Type, 'Follicles')
+        cmbAction   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Add (a)', 'Refine (r)','Select (s)', 'Enclose(e)', 'Magic wand(m)'},'Callback', @cmbAction_changed);
+    end
     chkShowObjects  = uicontrol('Style','checkbox'  ,'Units','normalized','position',[.912,.870,.085,.02],'String','Show (spacebar)', 'Value',1,'Callback',@chkShowObjects_changed);
     lstDots         = uicontrol('Style','listbox'   ,'Units','normalized','position',[.907,.600,.085,.25],'String',[],'Callback',@lstDots_valueChanged);
-    txtZoom         = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.320,.050,.02],'String','Zoom level:'); %#ok, unused variable
-    btnZoomOut      = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.260,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
-    btnZoomIn       = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.260,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
-    btnScores       = uicontrol('Style','Pushbutton','Units','normalized','position',[.905,.220,.090,.03],'String','Trachoma scoring', 'Callback', @btnScores_clicked); %#ok, unused variable
-    cmbScoreF       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.910,.170,.025,.04],'String', {'F0','F1','F2','F3'}, 'Callback',@cmbScoreF_changed);
-    cmbScoreP       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.940,.170,.025,.04],'String', {'P0','P1','P2','P3'}, 'Callback',@cmbScoreP_changed);
-    cmbScoreC       = uicontrol('Style','popup'     ,'Units','normalized','Position',[.970,.170,.025,.04],'String', {'C0','C1','C2','C3'}, 'Callback',@cmbScoreC_changed);
-    cmbScoreTE      = uicontrol('Style','popup'     ,'Units','normalized','Position',[.915,.125,.030,.04],'String', {'T/E0','T/E1','T/E2','T/E3'}, 'Callback',@cmbScoreTE_changed);
-    cmbScoreCC      = uicontrol('Style','popup'     ,'Units','normalized','Position',[.955,.125,.030,.04],'String', {'CC0','CC1','CC2','CC3'}, 'Callback',@cmbScoreCC_changed);
-    txtDiagnosis    = uicontrol('Style','text'      ,'Units','normalized','position',[.905,.095,.045,.02],'String','Diagnosis:'); %#ok, unused variable
-    cmbDiagnosis    = uicontrol('Style','popup'     ,'Units','normalized','Position',[.950,.080,.045,.04],'String', {'TNormal','TF','TI', 'TF+TI','TS','TT','CO', 'Ungradable'},'Callback', @cmbDiagnosis_changed);
-    btnSave         = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.020,.088,.05],'String','Done','Callback',@btnSave_clicked); %#ok, unused variable    
+    if contains(Prefs.Type, 'Follicles')
+        txtZoom     = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.320,.050,.02],'String','Zoom level:'); %#ok, unused variable
+        btnZoomOut  = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.260,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
+        btnZoomIn   = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.260,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
+        btnScores   = uicontrol('Style','Pushbutton','Units','normalized','position',[.905,.220,.090,.03],'String','Trachoma scoring', 'Callback', @btnScores_clicked); %#ok, unused variable
+        cmbScoreF   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.910,.170,.025,.04],'String', {'F0','F1','F2','F3'}, 'Callback',@cmbScoreF_changed);
+        cmbScoreP   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.940,.170,.025,.04],'String', {'P0','P1','P2','P3'}, 'Callback',@cmbScoreP_changed);
+        cmbScoreC   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.970,.170,.025,.04],'String', {'C0','C1','C2','C3'}, 'Callback',@cmbScoreC_changed);
+        cmbScoreTE  = uicontrol('Style','popup'     ,'Units','normalized','Position',[.915,.125,.030,.04],'String', {'T/E0','T/E1','T/E2','T/E3'}, 'Callback',@cmbScoreTE_changed);
+        cmbScoreCC  = uicontrol('Style','popup'     ,'Units','normalized','Position',[.955,.125,.030,.04],'String', {'CC0','CC1','CC2','CC3'}, 'Callback',@cmbScoreCC_changed);
+        txtDiagnosis= uicontrol('Style','text'      ,'Units','normalized','position',[.905,.095,.045,.02],'String','Diagnosis:'); %#ok, unused variable
+        cmbDiagnosis= uicontrol('Style','popup'     ,'Units','normalized','Position',[.950,.080,.045,.04],'String', {'TNormal','TF','TI', 'TF+TI','TS','TT','CO', 'Ungradable'},'Callback', @cmbDiagnosis_changed);
+    end
+    btnSave         = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.020,.088,.05],'String','Done','Callback',@btnSave_clicked); %#ok, unused variable
     
     % Selected object info
     btnDelete       = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.560,.088,.04],'String','Delete Item (d)','Callback',@btnDelete_clicked); %#ok, unused variable
@@ -65,7 +75,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     txtSelObjPos    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.470,.085,.02],'String','Pos : ');
     txtSelObjPix    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.440,.085,.02],'String','Pixels : ');
     txtSelObjValid  = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.410,.085,.02],'String','Type : ');    
-    btnValidate     = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.360,.088,.04],'String','Change validation (v)','Callback',@btnValidate_clicked); %#ok, unused variable
+    if contains(Prefs.Type, 'Follicles')
+        btnValidate = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.360,.088,.04],'String','Change validation (v)','Callback',@btnValidate_clicked); %#ok, unused variable
+    end
     
     % Main drawing area and related handles
 	axes_handle     = axes('Position', [0 0 0.903 1]);
@@ -76,12 +88,14 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     animatedLine    = animatedline('LineWidth', 1, 'Color', 'blue');
     
     cmbAction_assign(actionType);
-    cmbScoreF_assign(Dots.Scores.F);
-    cmbScoreP_assign(Dots.Scores.P);
-    cmbScoreC_assign(Dots.Scores.C);
-    cmbScoreTE_assign(Dots.Scores.TE);
-    cmbScoreCC_assign(Dots.Scores.CC);
-    cmbDiagnosis_assign(Dots.Diagnosis);    
+    if contains(Prefs.Type, 'Follicles')        
+        cmbScoreF_assign(Dots.Scores.F);
+        cmbScoreP_assign(Dots.Scores.P);
+        cmbScoreC_assign(Dots.Scores.C);
+        cmbScoreTE_assign(Dots.Scores.TE);
+        cmbScoreCC_assign(Dots.Scores.CC);
+        cmbDiagnosis_assign(Dots.Diagnosis);    
+    end
     lstDotsRefresh;   % List all objects and refresh image
     uiwait;           % The GUI waits for user interaction as default state 
     
@@ -138,22 +152,36 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     end
 
     function cmbAction_changed(src,event) %#ok, unused parameters
-        switch get(src,'Value')
-            case 1, actionType = 'Add';                
-            case 2, actionType = 'Refine';
-            case 3, actionType = 'Select';
-            case 4, actionType = 'Enclose';
-            case 5, actionType = 'MagicWand';
+        if contains(Prefs.Type, 'Eyelid')
+            switch get(src,'Value')
+                case 1, actionType = 'Refine';
+                case 2, actionType = 'Enclose';
+            end
+        elseif contains(Prefs.Type, 'Follicles')
+            switch get(src,'Value')
+                case 1, actionType = 'Add';                
+                case 2, actionType = 'Refine';
+                case 3, actionType = 'Select';
+                case 4, actionType = 'Enclose';
+                case 5, actionType = 'MagicWand';
+            end
         end
     end
 
     function cmbAction_assign(newType)
-        switch newType
-            case 'Add',         set(cmbAction, 'Value', 1);                
-            case 'Refine',      set(cmbAction, 'Value', 2);
-            case 'Select',      set(cmbAction, 'Value', 3);
-            case 'Enclose',     set(cmbAction, 'Value', 4);
-            case 'MagicWand',   set(cmbAction, 'Value', 5);
+        if contains(Prefs.Type, 'Eyelid')
+            switch newType
+                case 'Refine',      set(cmbAction, 'Value', 1);
+                case 'Enclose',     set(cmbAction, 'Value', 2);
+            end        
+        elseif contains(Prefs.Type, 'Follicles')
+            switch newType
+                case 'Add',         set(cmbAction, 'Value', 1);                
+                case 'Refine',      set(cmbAction, 'Value', 2);
+                case 'Select',      set(cmbAction, 'Value', 3);
+                case 'Enclose',     set(cmbAction, 'Value', 4);
+                case 'MagicWand',   set(cmbAction, 'Value', 5);
+            end        
         end
     end
 
@@ -456,6 +484,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         % Adds all pixels within area of passed polygon to object #ID
         % xv,yv: coordinates of the polygon vertices
         % ID: object number to which add the pixels
+
+        if numel(xv)<2
+            return
+        end
         
         % Switch mouse pointer to hourglass while computing
         oldPointer = get(fig_handle, 'Pointer');
@@ -695,17 +727,23 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             
             if PosX <= size(Img,2)
                 % Mouse in Left Panel, display a hand
-                set(fig_handle, 'Pointer', 'fleur');
+                oldPointer = get(fig_handle, 'Pointer');
+                if ~strcmp(oldPointer, 'watch')
+                    set(fig_handle, 'Pointer', 'fleur');
+                end
                 if isvalid(brush), delete(brush); end                    
 
             elseif PosX <= size(Img,2)*2
                 % Mouse in Right Panel, act depending of the selected tool
                 switch actionType
                     case {'Enclose', 'Select'}
-                        [PCData, PHotSpot] = getPointerCrosshair;
-                        set(fig_handle, 'Pointer', 'custom', 'PointerShapeCData', PCData, 'PointerShapeHotSpot', PHotSpot);
+                        oldPointer = get(fig_handle, 'Pointer');
+                        if ~strcmp(oldPointer, 'watch')                        
+                            [PCData, PHotSpot] = getPointerCrosshair;
+                            set(fig_handle, 'Pointer', 'custom', 'PointerShapeCData', PCData, 'PointerShapeHotSpot', PHotSpot);
+                        end
                         if isvalid(brush), delete(brush); end 
-                    case {'Add', 'Refine', 'MagicWand'}
+                    case {'Add', 'Refine', 'MagicWand'}                        
                         % Display a circle if we are in the right panel
                         set(fig_handle, 'pointer', 'custom', 'PointerShapeCData', NaN(16,16));                    
 
@@ -728,7 +766,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
                 end
             else
                 % Display the default arrow everywhere else
-                set(fig_handle, 'Pointer', 'arrow');
+                oldPointer = get(fig_handle, 'Pointer');
+                if ~strcmp(oldPointer, 'watch')
+                    set(fig_handle, 'Pointer', 'arrow');
+                end
                 if isvalid(brush), delete(brush); end                    
             end                       
         else
@@ -935,31 +976,36 @@ if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Pos
     % Flag voxels of passing objects that are within zoomed area
     VisObjIDs = find(passIcut);
     for i = 1:numel(VisObjIDs)
-        switch Filter(VisObjIDs(i))
-            case 1,    ColorDot = Settings.ColorValid;
-            case 0,    ColorDot = Settings.ColorMaybe;
-            case -1,   ColorDot = Settings.ColorFalse;
-            otherwise, ColorDot = Settings.ColorValid;
+        
+        if VisObjIDs(i) == SelectedObjID
+            ColorDot =  Settings.ColorSelected;
+        else
+            switch Filter(VisObjIDs(i))
+                case 1,    ColorDot = Settings.ColorValid;
+                case 0,    ColorDot = Settings.ColorMaybe;
+                case -1,   ColorDot = Settings.ColorFalse;
+                otherwise, ColorDot = Settings.ColorValid;
+            end
         end
+        
         VoxPos = Dots.Vox(VisObjIDs(i)).Pos;
+        if strfind(Settings.Type, 'Eyelid')
+            VoxPos(:,1) = VoxPos(:,1)+fxpad-fxmin+1;
+            VoxPos(:,2) = VoxPos(:,2)+fypad-fymin+1;
+            for j = 1:size(VoxPos,1)
+                PostVoxMapCut(VoxPos(j,1),VoxPos(j,2),:) = ColorDot;
+            end
+        else    
         for j = 1:size(VoxPos,1)
             if (VoxPos(j,1)>fxmin) && (VoxPos(j,1)<fxmax) && (VoxPos(j,2)>fymin) && (VoxPos(j,2)<fymax)
                 %disp('found voxel within selection area');                
                 PostVoxMapCut(VoxPos(j,1)+fxpad-fxmin+1,VoxPos(j,2)+fypad-fymin+1,:) = ColorDot;
             end
         end
+        end
     end
         
-    if SelectedObjID > 0
-        % If user clicked an object belonging within the zoomed region, select it
-        VoxPos = Dots.Vox(SelectedObjID).Pos;
-        %disp(['SelectedObjID: ' num2str(SelectedObjID)]);
-        for i = 1:size(VoxPos,1)
-            if (VoxPos(i,1)>fxmin) && (VoxPos(i,1)<fxmax) && (VoxPos(i,2)>fymin) && (VoxPos(i,2)<fymax)
-                PostVoxMapCut(VoxPos(i,1)+fxpad-fxmin+1, VoxPos(i,2)+fypad-fymin+1, :) = Settings.ColorSelected;
-            end
-        end
-    elseif PosZoom(1)>0 && PosZoom(2)>0
+    if SelectedObjID == 0 && PosZoom(1)>0 && PosZoom(2)>0
         % If user clicked a location within the zoomed region belonging to an object, select it
         for i=1:numel(VisObjIDs)
             VoxPos = Dots.Vox(VisObjIDs(i)).Pos;

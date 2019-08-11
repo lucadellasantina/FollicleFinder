@@ -42,6 +42,10 @@
 % + Automatic follicle detection does NOT shuffle filenames order
 % + Faster RGB values extraction in inspectPhoto and findObject2D
 % + New Pixel classifier net: FCN-AlexNet
+% + Fixed error when trying to enclose region with only 1 pixel
+% + Converted all confirmation dialog using new UI interface
+% + Fixed error when manually reviewing eyelid nothing was selected
+% + Added progressbars for manually grading images
 %
 % Version 1.2 - created on 2019-06-08
 %
