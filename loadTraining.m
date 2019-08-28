@@ -29,8 +29,8 @@ files = dir(TrainingFolder);         % List the content of /Objects folder
     files = files(~[files.isdir]);  % Keep only files, discard subfolders
     
     for d = 1:numel(files)
-        load([TrainingFolder filesep files(d).name],'UID');
-        if strcmp(UID, RequestedUID)
+        [~, fName, ~] = fileparts(files(d).name);
+        if strcmp(fName, RequestedUID)
             if isempty(FieldNames)
                 Training = load([TrainingFolder filesep files(d).name]);
             else

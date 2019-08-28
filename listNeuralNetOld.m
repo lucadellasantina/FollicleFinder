@@ -17,15 +17,22 @@
 %  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 %
 
-function tblN = listNeuralNet
+function tblN = listNeuralNetOld
+tic;
 %% List available object names and UIDs
 NetFolder = [userpath filesep 'FollicleFinder' filesep 'NeuralNet'];
+
+tblN = [];
 files = dir(NetFolder); % List the content of /Training folder
 files = files(~[files.isdir]);  % Keep only files, discard subfolders
-
-tblN = repmat(table({'Empty'}, {'Empty'}, {'Empty'}, {datetime}, false, {'Empty'}),numel(files),1);
 for d = 1:numel(files)
     N = load([NetFolder filesep files(d).name], 'Name', 'Type', 'Model', 'Date', 'Trained', 'UID');
-    tblN(d,:) = table({N.Name}, {N.Type}, {N.Model}, {N.Date}, N.Trained, {N.UID});
+    if isempty(tblN)
+        tblN = table({N.Name}, {N.Type}, {N.Model}, {N.Date}, N.Trained, {N.UID});
+    else
+        tblN = [tblN; table({N.Name}, {N.Type}, {N.Model}, {N.Date}, N.Trained, {N.UID})];
+    end
 end
+
+disp(num2str(toc));
 end

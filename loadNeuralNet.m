@@ -29,8 +29,8 @@ files = dir(NetFolder);         % List the content of /Objects folder
     files = files(~[files.isdir]);  % Keep only files, discard subfolders
     
     for d = 1:numel(files)
-        load([NetFolder filesep files(d).name],'UID');
-        if strcmp(UID, RequestedUID)
+        [~, fName, ~] = fileparts(files(d).name);
+        if strcmp(fName, RequestedUID)
             if isempty(FieldNames)
                 Net = load([NetFolder filesep files(d).name]);
             else
