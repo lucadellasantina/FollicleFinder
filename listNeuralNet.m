@@ -23,9 +23,9 @@ NetFolder = [userpath filesep 'FollicleFinder' filesep 'NeuralNet'];
 files = dir(NetFolder); % List the content of /Training folder
 files = files(~[files.isdir]);  % Keep only files, discard subfolders
 
-tblN = repmat(table({'Empty'}, {'Empty'}, {'Empty'}, {datetime}, false, {'Empty'}),numel(files),1);
+tblN = repmat(table({'Empty'}, {'Empty'}, {'Empty'}, {'Empty'}, {datetime}, false, {'Empty'}),numel(files),1);
 for d = 1:numel(files)
-    N = load([NetFolder filesep files(d).name], 'Name', 'Type', 'Model', 'Date', 'Trained', 'UID');
-    tblN(d,:) = table({N.Name}, {N.Type}, {N.Model}, {N.Date}, N.Trained, {N.UID});
+    N = load([NetFolder filesep files(d).name], 'Name', 'Target', 'Type', 'Model', 'Date', 'Trained', 'UID');
+    tblN(d,:) = table({N.Name}, {N.Target}, {N.Type}, {N.Model}, {N.Date}, N.Trained, {N.UID});
 end
 end
