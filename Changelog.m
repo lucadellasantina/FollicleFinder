@@ -3,7 +3,7 @@
 %
 %% ChangeLog
 %
-% Version 2.0 beta - created on 2019-07-29
+% Version 2.0 beta - created on 2019-10-07
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding
@@ -46,6 +46,8 @@
 % + Converted all confirmation dialog using new UI interface
 % + Fixed error when manually reviewing eyelid nothing was selected
 % + Added progressbars for manually grading images
+% + Neural net table is sorted by name
+% + Compare multiple neural nets
 %
 % Version 1.2 - created on 2019-06-08
 %

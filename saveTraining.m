@@ -34,23 +34,11 @@ function saveTraining(Training, FieldName)
     end
     FileName = [TrainingFolder filesep Training.UID '.mat'];
     
-    lastwarn('') % Clear last warning message
-    
     if isempty(FieldName)
         % Save struct on file with fields split tino separate variables
-        save(FileName, '-struct', 'Training', '-v7');
-        [warnMsg, ~] = lastwarn;
-        if ~isempty(warnMsg)
-            disp('File bigger than 2Gb, will be saved using larger file format, be patient...')
-            save(FileName, '-struct', 'Training', '-v7.3', '-nocompression');
-        end
+        save(FileName, '-struct', 'Training', '-v7.3');
     else
         % Save only a specific FieldName on disk
         save(FileName, '-struct', 'Training', FieldName,'-append');
-        [warnMsg, ~] = lastwarn;
-        if ~isempty(warnMsg)
-            disp('File bigger than 2Gb, will be saved using larger file format, be patient...')
-            save(FileName, '-struct', 'Training', FieldName, '-append');
-        end
     end    
 end

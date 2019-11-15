@@ -28,4 +28,6 @@ for d = 1:numel(files)
     N = load([NetFolder filesep files(d).name], 'Name', 'Target', 'Type', 'Model', 'Date', 'Trained', 'UID');
     tblN(d,:) = table({N.Name}, {N.Target}, {N.Type}, {N.Model}, {N.Date}, N.Trained, {N.UID});
 end
+
+tblN = sortrows(tblN,1); % Sort table by neural net name
 end

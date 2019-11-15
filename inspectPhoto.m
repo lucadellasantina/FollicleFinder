@@ -32,7 +32,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     if contains(Prefs.Type, 'Eyelid') && ~isempty(Dots.Filter)
         SelObjID = 1;
     else        
-        SelObjID    = 0;        % Initialize selected object ID#
+        SelObjID = 0;        % Initialize selected object ID#
     end
     actionType  = Prefs.actionType; % Mode of operation
     analysisDone= false;    % Flag to determine if we should close the UI
@@ -990,8 +990,8 @@ if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Pos
         
         VoxPos = Dots.Vox(VisObjIDs(i)).Pos;
         if strfind(Settings.Type, 'Eyelid')
-            VoxPos(:,1) = VoxPos(:,1)+fxpad-fxmin+1;
-            VoxPos(:,2) = VoxPos(:,2)+fypad-fymin+1;
+            VoxPos(:,1) = VoxPos(:,1)+fxpad-fxmin;
+            VoxPos(:,2) = VoxPos(:,2)+fypad-fymin;
             for j = 1:size(VoxPos,1)
                 PostVoxMapCut(VoxPos(j,1),VoxPos(j,2),:) = ColorDot;
             end
@@ -999,7 +999,7 @@ if (Pos(1) > 0) && (Pos(2) > 0) && (Pos(1) < size(Post,2)) && (Pos(2) < size(Pos
         for j = 1:size(VoxPos,1)
             if (VoxPos(j,1)>fxmin) && (VoxPos(j,1)<fxmax) && (VoxPos(j,2)>fymin) && (VoxPos(j,2)<fymax)
                 %disp('found voxel within selection area');                
-                PostVoxMapCut(VoxPos(j,1)+fxpad-fxmin+1,VoxPos(j,2)+fypad-fymin+1,:) = ColorDot;
+                PostVoxMapCut(VoxPos(j,1)+fxpad-fxmin,VoxPos(j,2)+fypad-fymin,:) = ColorDot;
             end
         end
         end

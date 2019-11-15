@@ -20,18 +20,17 @@
 function tblT = listTraining
 %% List available object names and UIDs
 TrainingFolder = [userpath filesep 'FollicleFinder' filesep 'Training'];
-
-tblT = [];
 files = dir(TrainingFolder); % List the content of /Training folder
-    files = files(~[files.isdir]);  % Keep only files, discard subfolders
-    for d = 1:numel(files)
-        T = load([TrainingFolder filesep files(d).name], 'User', 'ImagesFolder', 'Type', 'Date', 'UID', 'ImagesList', 'ImagesTODOFollicles', 'ImagesTODOEyelid');
-        NumDone = ['F:' num2str(numel(T.ImagesList)-numel(T.ImagesTODOFollicles)) '/' num2str(numel(T.ImagesList))];
-        NumDone = [NumDone ' E:' num2str(numel(T.ImagesList)-numel(T.ImagesTODOEyelid)) '/' num2str(numel(T.ImagesList))];
-        if isempty(tblT)
-            tblT = table({T.User},  {T.ImagesFolder}, {T.Type}, {T.Date}, {NumDone}, {T.UID});
-        else
-            tblT = [tblT; table({T.User},  {T.ImagesFolder}, {T.Type}, {T.Date}, {NumDone}, {T.UID})];
-        end
-    end
+files = files(~[files.isdir]);  % Keep only files, discard subfolders
+
+tblT = repmat(table({'Empty'}, {'Empty'}, {'Empty'}, {datetime}, {'Empty'}, {'Empty'}),numel(files),1);
+for d = 1:numel(files)
+    T = load([TrainingFolder filesep files(d).name], 'User', 'ImagesFolder', 'Type', 'Date', 'UID', 'ImagesList', 'ImagesTODOFollicles', 'ImagesTODOEyelid');
+    FolliclesDone = numel(T.ImagesList)-numel(T.ImagesTODOFollicles);
+    EyelidDone    = numel(T.ImagesList)-numel(T.ImagesTODOEyelid);
+    DoneString    = ['F:' num2str(FolliclesDone) '/' num2str(numel(T.ImagesList)) ' E:' num2str(EyelidDone) '/' num2str(numel(T.ImagesList))];
+    tblT(d,:)     = table({T.User},  {T.ImagesFolder}, {T.Type}, {T.Date}, {DoneString}, {T.UID});
+end
+
+tblT = sortrows(tblT,1); % Sort table by user name
 end
