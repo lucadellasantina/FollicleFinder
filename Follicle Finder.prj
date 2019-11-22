@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1526166264" file="/home/lab/Desktop/Users/Luca/FollicleFinder/Follicle Finder.prj" location="/home/lab/Desktop/Users/Luca/FollicleFinder" name="Follicle Finder" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="221707870" file="/home/lab/Desktop/Users/Luca/FollicleFinder/Follicle Finder.prj" location="/home/lab/Desktop/Users/Luca/FollicleFinder" name="Follicle Finder" target="target.mlapps" target-name="Package App">
     <param.appname>Follicle Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
@@ -12,8 +12,8 @@
     </param.icons>
     <param.summary>Automatic trachoma detector</param.summary>
     <param.description>Copyright 2019 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tp54f9d8ef_4f83_4d5d_a66f_3116c7a4e6ff.png</param.screenshot>
-    <param.version>2.0.2</param.version>
+    <param.screenshot>/tmp/tpf910af87_864e_4dce_92b2_c15b9f431d48.png</param.screenshot>
+    <param.version>2.0.3</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Computer Vision Toolbox</item>
