@@ -1,9 +1,27 @@
 %% Follicle Finder - Recognize trachomatous follicles in eyelid photographs
-%  Copyright (C) 2019 Luca Della Santina
+%  Copyright (C) 2019-2020 Luca Della Santina
 %
 %% ChangeLog
 %
-% Version 2.0 beta - created on 2019-10-07
+% Version 2.3 - created on 2020-03-23
+% 
+% + Adjustable neural net confidence P level
+% + Test network saves the original raw image along with predictions
+%
+% Version 2.2 - created on 2020-03-22
+% 
+% + Unified eyelid and follicles agreement comparison
+% + Agreement comparison uses Intraclass Correlation Coefficient (ICC)
+% + Simplified UI removing bottom bar, merged auto and manual detection tab
+% + User can choose which images to review from a list
+% 
+% Version 2.1 - created on 2020-03-10
+% 
+% + Fixed U-Net training parameters
+% + Added DeepLab v3+ neural net for semantic segmentation
+% + Version number automatically retrieved from FollicleFinder properties
+%
+% Version 2.0 - created on 2019-10-07
 %
 % + Licensed under the GNU General Public License v3 (GPLv3)
 % + Automatic follicle finder using findObjects2D iterative thresholding

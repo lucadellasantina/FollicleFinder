@@ -1,53 +1,56 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="221707870" file="/home/lab/Desktop/Users/Luca/FollicleFinder/Follicle Finder.prj" location="/home/lab/Desktop/Users/Luca/FollicleFinder" name="Follicle Finder" target="target.mlapps" target-name="Package App">
-    <param.appname>Follicle Finder</param.appname>
+  <configuration build-checksum="1721243582" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
+    <param.appname>Trachoma Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
     <param.company />
-    <param.icon>${PROJECT_ROOT}/Follicle Finder_resources/icon_24.png</param.icon>
+    <param.icon>${PROJECT_ROOT}/Trachoma Finder_resources/icon_24.png</param.icon>
     <param.icons>
-      <file>${PROJECT_ROOT}/Follicle Finder_resources/icon_48.png</file>
-      <file>${PROJECT_ROOT}/Follicle Finder_resources/icon_24.png</file>
-      <file>${PROJECT_ROOT}/Follicle Finder_resources/icon_16.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/icon_48.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/icon_24.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/icon_16.png</file>
     </param.icons>
     <param.summary>Automatic trachoma detector</param.summary>
-    <param.description>Copyright 2019 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tpf910af87_864e_4dce_92b2_c15b9f431d48.png</param.screenshot>
-    <param.version>2.0.3</param.version>
+    <param.description>Copyright 2019-2020 Luca Della Santina</param.description>
+    <param.screenshot>/tmp/tpcd79673f_bd18_42b2_9336_c827016e1f92.png</param.screenshot>
+    <param.version>2.6</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Computer Vision Toolbox</item>
       <item>Deep Learning Toolbox</item>
       <item>Image Processing Toolbox</item>
+      <item>Statistics and Machine Learning Toolbox</item>
     </param.products.name>
     <param.products.id>
       <item>1</item>
       <item>96</item>
       <item>12</item>
       <item>17</item>
+      <item>19</item>
     </param.products.id>
     <param.products.version>
-      <item>9.7</item>
-      <item>9.1</item>
-      <item>13.0</item>
-      <item>11.0</item>
+      <item>9.8</item>
+      <item>9.2</item>
+      <item>14.0</item>
+      <item>11.1</item>
+      <item>11.7</item>
     </param.products.version>
     <param.platforms />
     <param.output>${PROJECT_ROOT}</param.output>
-    <param.guid>121594c5-c74d-469c-822c-bff502c1fe1c</param.guid>
+    <param.guid>93dc5db1-04c0-420e-bfba-457ae5c2bb79</param.guid>
     <unset>
       <param.company />
       <param.platforms />
       <param.output />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}/FollicleFinder.mlapp</file>
+      <file>${PROJECT_ROOT}/TrachomaFinder.mlapp</file>
     </fileset.main>
     <fileset.depfun>
+      <file>${PROJECT_ROOT}/ICC.m</file>
       <file>${PROJECT_ROOT}/deleteNeuralNet.m</file>
       <file>${PROJECT_ROOT}/deleteTraining.m</file>
       <file>${PROJECT_ROOT}/editStruct.m</file>
-      <file>${PROJECT_ROOT}/findObjects2D.m</file>
       <file>${PROJECT_ROOT}/findObjects2DNN.m</file>
       <file>${PROJECT_ROOT}/generateUID.m</file>
       <file>${PROJECT_ROOT}/inpoly2.m</file>
@@ -63,15 +66,15 @@
       <file>${MATLAB_ROOT}/toolbox/local/userpath.m</file>
     </fileset.depfun>
     <fileset.resources>
-      <file>${PROJECT_ROOT}/Follicle Finder_resources</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources</file>
     </fileset.resources>
     <fileset.package />
     <build-deliverables>
-      <file location="/home/lab/Desktop/Users/Luca" name="FollicleFinder" optional="false">/home/lab/Desktop/Users/Luca/FollicleFinder</file>
+      <file location="/home/luca/Dropbox/MATLAB scripts" name="TrachomaFinder" optional="false">/home/luca/Dropbox/MATLAB scripts/TrachomaFinder</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>/home/lab/MATLAB/R2019b</root>
+      <root>/home/luca/MATLAB/R2020a</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
         <toolbox name="neuralnetwork" />
@@ -96,7 +99,7 @@
       <vista>false</vista>
       <linux>true</linux>
       <solaris>false</solaris>
-      <osver>5.3.0-20-generic</osver>
+      <osver>5.4.0-37-generic</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>glnxa64</arch>

@@ -1,0 +1,275 @@
+%% TrachomaFinder - Recognize trachomatous follicles in eyelid photographs
+%  Copyright (C) 2019 Luca Della Santina
+%
+%  This file is part of TrachomaFinder
+%
+
+function [fig_handle, axes_handle, scroll_bar_handles, scroll_func] = ...
+	inspectPhotoUI(num_frames, redraw_func, big_scroll, ImStk, Dots, Filter, CutNumVox, varargin)
+
+	% Default parameter values
+	if nargin < 3 || isempty(big_scroll), big_scroll = 30; end  %page-up and page-down advance, in frames
+    
+    size_video = [0 0 0.90 1];
+	click   = 0;                        % Initialize click status
+    f       = ceil(num_frames/2);       % Current frame
+    Pos     = [ceil(size(ImStk,1)/2), ceil(size(ImStk,2)/2), ceil(size(ImStk,3)/2)]; % Initial position is middle of the stack
+    PosZoom = [-1, -1, -1];             % Initial position in zoomed area
+    passI   = Filter.passF;             % Initialize temporary filter
+    thresh  = 0;                        % Initialize thresholds
+    thresh2 = 0;                        % Initialize thresholds
+    SelObjID= 0;                        % Initialize selected object ID#
+	
+	% Initialize GUI
+	fig_handle = figure('Name','Photo inspector (green: raw signal, magenta: validated object, blue: selected object)','NumberTitle','off','Color',[.3 .3 .3], 'MenuBar','none', 'Units','norm', ...
+		'WindowButtonDownFcn',@button_down, 'WindowButtonUpFcn',@button_up, 'WindowButtonMotionFcn', @on_click, 'KeyPressFcn', @key_press,'windowscrollWheelFcn', @wheel_scroll, varargin{:});
+	
+	% Add custom scroll bar
+	scroll_axes = axes('Parent',fig_handle, 'Position',[0 0 0.9 0.045], 'Visible','off', 'Units', 'normalized');
+	axis([0 1 0 1]); axis off
+	scroll_bar_width = max(1 / num_frames, 0.01);
+	scroll_handle = patch([0 1 1 0] * scroll_bar_width, [0 0 1 1], [.8 .8 .8], 'Parent',scroll_axes, 'EdgeColor','none', 'ButtonDownFcn', @on_click);
+
+    % Add GUI conmponents
+    set(gcf,'units', 'normalized', 'position', [0.05 0.1 0.90 0.76]);
+    pnlSettings     = uipanel(  'Title','Objects'   ,'Units','normalized','Position',[.903,.005,.095,.99]); %#ok, unused variable
+    txtValidObjs    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.930,.085,.02],'String',['Valid: ' num2str(numel(find(passI)))]);
+    txtTotalObjs    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.900,.085,.02],'String',['Total: ' num2str(numel(passI))]); %#ok, unused variable
+    chkShowObjects  = uicontrol('Style','checkbox'  ,'Units','normalized','position',[.912,.870,.085,.02],'String','Show (spacebar)', 'Value',1     ,'Callback',@chkShowObjects_changed);
+    txtZoom         = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.230,.050,.02],'String','Zoom level:'); %#ok, unused variable
+    btnZoomOut      = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.170,.030,.05],'String','-'                              ,'Callback',@btnZoomOut_clicked); %#ok, unused variable
+    btnZoomIn       = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.170,.030,.05],'String','+'                              ,'Callback',@btnZoomIn_clicked); %#ok, unused variable
+    btnSave         = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.010,.088,.05],'String','Save current objects'           ,'Callback',@btnSave_clicked); %#ok, unused variable    
+    
+    % Selected object info
+    txtSelObj       = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.560,.085,.02],'String','Selected Object info'); %#ok, unused variable
+    txtSelObjID     = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.530,.085,.02],'String','ID# :');
+    txtSelObjPos    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.500,.085,.02],'String','Position : ');
+    txtSelObjRad    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.470,.085,.02],'String','Radius : ');
+    txtSelObjValid  = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.350,.085,.02],'String','Validated : ');    
+    btnToggleValid  = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.300,.088,.04],'String','Change Validation (v)'          ,'Callback',@btnToggleValid_clicked); %#ok, unused variable
+    
+	% Main drawing axes for video display
+    if size_video(2) < 0.03; size_video(2) = 0.03; end % bottom 0.03 will be used for scroll bar HO 2/17/2011
+	axes_handle = axes('Position',size_video);
+	
+	% Return handles
+	scroll_bar_handles = [scroll_axes; scroll_handle];
+	scroll_func = @scroll;    
+	scroll(f);
+    uiwait;
+    
+    function btnToggleValid_clicked(src,event) %#ok, unused arguments 
+        if SelObjID
+            passI(SelObjID) = ~passI(SelObjID);
+            set(txtValidObjs,'string',['Valid: ' num2str(numel(find(passI)))]);
+            PosZoom = [-1, -1, -1]; % Deselect object after validatio change
+            scroll(f);    
+        end
+    end
+
+    function chkShowObjects_changed(src,event) %#ok, unused arguments
+        scroll(f);
+    end
+
+    function btnZoomOut_clicked(src, event) %#ok, unused arguments
+        ImSize = [size(ImStk,1), size(ImStk,2)];
+        CutNumVox    = [min(CutNumVox(1)*2, ImSize(1)), min(CutNumVox(2)*2, ImSize(2))];
+        PosZoom = [-1, -1, -1];
+        scroll(f);
+    end
+
+    function btnZoomIn_clicked(src, event) %#ok, unused arguments
+        CutNumVox    = [max(round(CutNumVox(1)/2,0), 32), max(round(CutNumVox(2)/2,0),32)];
+        PosZoom = [-1, -1, -1];
+        scroll(f);
+    end
+
+    function btnSave_clicked(src, event) %#ok, unused arguments
+        Filter.passF    = passI;
+        save([pwd filesep 'Filter.mat'], 'Filter');
+        msgbox('Validated objects saved.', 'Saved', 'help');
+    end
+
+    function applyFilter(new_thresh, new_thresh2)
+        thresh = new_thresh;
+        thresh2 = new_thresh2;
+        
+        set(txtValidObjs,'string',['Valid Objects: ' num2str(numel(find(passI)))]);
+        scroll(f);
+    end
+
+    function wheel_scroll(src, event) %#ok, unused arguments
+          if event.VerticalScrollCount < 0              
+              %position = get(scroll_handle, 'XData');
+              %disp(position);
+              scroll(f+1); % Scroll up
+          elseif event.VerticalScrollCount > 0             
+              scroll(f-1); % Scroll down
+          end
+    end
+    
+    function key_press(src, event) %#ok, unused arguments
+        %event.Key % displays the name of the pressed key
+        switch event.Key  % Process shortcut keys
+            case 'space'
+                chkShowObjects.Value = ~chkShowObjects.Value;
+                chkShowObjects_changed();
+            case 'v'
+                btnToggleValid_clicked();
+            case {'leftarrow','a'}
+                Pos = [max(CutNumVox(2)/2, Pos(1)-CutNumVox(1)+ceil(CutNumVox(2)/5)), Pos(2),f];
+                PosZoom = [-1, -1, -1];
+                scroll(f);
+            case {'rightarrow','d'}
+                Pos = [min(size(ImStk,2)-1-CutNumVox(2)/2, Pos(1)+CutNumVox(2)-ceil(CutNumVox(2)/5)), Pos(2),f];
+                PosZoom = [-1, -1, -1];
+                scroll(f);
+            case {'uparrow','w'}
+                Pos = [Pos(1), max(CutNumVox(1)/2, Pos(2)-CutNumVox(1)+ceil(CutNumVox(1)/5)),f];
+                PosZoom = [-1, -1, -1];
+                scroll(f);
+            case {'downarrow','s'}
+                Pos = [Pos(1), min(size(ImStk,1)-1-CutNumVox(1)/2, Pos(2)+CutNumVox(1)-ceil(CutNumVox(1)/5)),f];
+                PosZoom = [-1, -1, -1];
+                scroll(f);
+            case 'pageup'
+                if f - big_scroll < 1  %scrolling before frame 1, stop at frame 1
+                    scroll(1);
+                else
+                    scroll(f - big_scroll);
+                end
+            case 'pagedown'
+                if f + big_scroll > num_frames  %scrolling after last frame
+                    scroll(num_frames);
+                else
+                    scroll(f + big_scroll);
+                end
+            case 'home'  , scroll(1);
+            case 'end'   , scroll(num_frames);
+            case 'equal' , btnZoomIn_clicked;
+            case 'hyphen', btnZoomOut_clicked;
+        end
+    end
+
+	%mouse handler
+	function button_down(src, event)
+		set(src,'Units','norm')
+		click_pos = get(src, 'CurrentPoint');
+        if click_pos(2) <= 0.035
+            click = 1; % click happened on the scroll bar
+            on_click(src,event);
+        else
+            click = 2; % click happened somewhere else
+            on_click(src,event);
+        end
+	end
+
+	function button_up(src, event)  %#ok, unused arguments
+		click = 0;
+	end
+
+	function on_click(src, event)  %#ok, unused arguments
+		if click == 0, return; end
+		
+        if click == 1 
+            % User clicked the scroll bar, get x-coordinate of click
+            
+            set(fig_handle, 'Units', 'normalized');
+            click_point = get(fig_handle, 'CurrentPoint');
+            set(fig_handle, 'Units', 'pixels');
+            x = click_point(1) / 0.9; % scroll bar with is 0.9 of window
+            
+            % get corresponding frame number
+            new_f = floor(1 + x * num_frames);
+            
+            if new_f < 1 || new_f > num_frames, return; end  %outside valid range
+            
+            if new_f ~= f  %don't redraw if the frame is the same (to prevent delays)
+                scroll(new_f);
+            end
+        else
+            % User clicked on the image get XY-coordinates in pixels
+            
+            set(fig_handle, 'Units', 'pixels');
+            click_point = get(gca, 'CurrentPoint');
+            PosX = ceil(click_point(1,1));
+            PosY = ceil(click_point(1,2));
+            if PosX <= size(ImStk,2)
+                % Make sure zoom rectangle is within image area
+                ClickPos = [max(CutNumVox(2)/2+1, PosX),...
+                            max(CutNumVox(1)/2+1, PosY)];
+                    
+                ClickPos = [min(size(ImStk,2)-CutNumVox(2)/2,ClickPos(1)),...
+                            min(size(ImStk,1)-CutNumVox(1)/2,ClickPos(2))];
+                Pos      = [ClickPos, f];
+                PosZoom  = [-1, -1, -1];
+                scroll(f);
+            else
+                % User clicked in the right panel (zoomed region)
+                % Detect coordinates of the point clicked in PosZoom
+                % Note: x,y coordinates are inverted in ImStk
+                % Note: x,y coordinates are inverted in CutNumVox
+                PosZoomX = PosX - size(ImStk,2)-1;
+                PosZoomX = round(PosZoomX * CutNumVox(2)/(size(ImStk,2)-1));
+                
+                PosZoomY = size(ImStk,1) - PosY;
+                PosZoomY = CutNumVox(1)-round(PosZoomY*CutNumVox(1)/(size(ImStk,1)-1));
+                
+                % Do different things depending whether left/right-clicked
+                clickType = get(fig_handle, 'SelectionType');
+                if strcmp(clickType, 'alt')
+                    % User right-clicked in the right panel (zoomed region)
+                    % Move the view to that position
+                    PosZoom = [-1, -1, -1];
+                    Pos     = [Pos(1)+PosZoomX-CutNumVox(2)/2,...
+                               Pos(2)+PosZoomY-CutNumVox(1)/2, f];
+
+                    % Make sure zoom rectangle is within image area
+                    Pos     = [max(CutNumVox(2)/2+1,Pos(1)),...
+                               max(CutNumVox(1)/2+1,Pos(2)), f];
+                    Pos     = [min(size(ImStk,2)-CutNumVox(2)/2,Pos(1)),...
+                               min(size(ImStk,1)-CutNumVox(1)/2,Pos(2)),f];
+
+                elseif strcmp(clickType, 'normal')
+                    % User left-clicked in the riht panel (zoomed region)
+                    % Store the position for selecting objects in there
+                    PosZoom = [PosZoomX, PosZoomY, f];
+                    Pos     = [Pos(1), Pos(2), f];
+                end
+                scroll(f);
+            end
+        end
+	end
+
+	function scroll(new_f)
+		if nargin == 1  %scroll to another position (new_f)
+			if new_f < 1 || new_f > num_frames
+				return
+			end
+			f = new_f;
+		end
+		
+		%convert frame number to appropriate x-coordinate of scroll bar
+		scroll_x = (f - 1) / num_frames;
+        
+		%move scroll bar to new position
+		set(scroll_handle, 'XData', scroll_x + [0 1 1 0] * scroll_bar_width);
+		
+        %set to the right axes and call the custom redraw function
+		set(fig_handle, 'CurrentAxes', axes_handle);
+		SelObjID = redraw_func(f, chkShowObjects.Value, Pos, PosZoom, CutNumVox, passI);
+        if SelObjID
+            set(txtSelObjID  ,'string',['ID#: ' num2str(SelObjID)]);
+            set(txtSelObjPos ,'string',['Position : ' num2str(Dots.Pos(SelObjID))]);
+            set(txtSelObjRad ,'string',['Radius : ' num2str(Dots.Rad(SelObjID))]);
+            set(txtSelObjValid  ,'string',['Validated : ' num2str(ceil(passI(SelObjID)))]);
+            
+        else
+            set(txtSelObjID     ,'string','ID#: '       );
+            set(txtSelObjITMax  ,'string','Position : '    );
+            set(txtSelObjVol    ,'string','Radius : '   );
+            set(txtSelObjValid  ,'string','Validated : ');
+        end
+    end
+end

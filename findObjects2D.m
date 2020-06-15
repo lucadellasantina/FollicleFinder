@@ -1,5 +1,5 @@
 %% Follicle Finder - Recognize trachomatous follicles in eyelid photographs
-%  Copyright (C) 2019 Luca Della Santina
+%  Copyright (C) 2019-2020 Luca Della Santina
 %
 %  This file is part of Follicle Finder
 %
