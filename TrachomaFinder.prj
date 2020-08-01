@@ -1,12 +1,12 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="1428831541" file="D:\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder.prj" location="D:\Dropbox\MATLAB scripts\TrachomaFinder" name="TrachomaFinder" preferred-package-location="C:\home\luca\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder\for_redistribution" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="1428831541" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/TrachomaFinder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="TrachomaFinder" preferred-package-location="/home/luca/C:\home\luca\C:\home\luca\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder\for_redistribution" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>TrachomaFinder</param.appname>
-    <param.icon>${PROJECT_ROOT}\TrachomaFinder_resources\icon.ico</param.icon>
+    <param.icon>${PROJECT_ROOT}/TrachomaFinder_resources/icon.ico</param.icon>
     <param.icons>
-      <file>${PROJECT_ROOT}\TrachomaFinder_resources\icon_48.png</file>
-      <file>${PROJECT_ROOT}\TrachomaFinder_resources\icon_32.png</file>
-      <file>${PROJECT_ROOT}\TrachomaFinder_resources\icon_24.png</file>
-      <file>${PROJECT_ROOT}\TrachomaFinder_resources\icon_16.png</file>
+      <file>${PROJECT_ROOT}/TrachomaFinder_resources/icon_48.png</file>
+      <file>${PROJECT_ROOT}/TrachomaFinder_resources/icon_32.png</file>
+      <file>${PROJECT_ROOT}/TrachomaFinder_resources/icon_24.png</file>
+      <file>${PROJECT_ROOT}/TrachomaFinder_resources/icon_16.png</file>
     </param.icons>
     <param.version>2.6</param.version>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
@@ -14,17 +14,30 @@
     <param.company />
     <param.summary>Automatic trachoma detector</param.summary>
     <param.description>Copyright 2019-2020 Luca Della Santina</param.description>
-    <param.screenshot>${PROJECT_ROOT}\app_icon\FollicleFinder.png</param.screenshot>
+    <param.screenshot />
     <param.guid />
-    <param.installpath.string>\TrachomaFinder\</param.installpath.string>
-    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.installpath.string>/TrachomaFinder/</param.installpath.string>
+    <param.installpath.combo>option.installpath.user</param.installpath.combo>
     <param.logo />
     <param.install.notes />
-    <param.target.install.notes />
-    <param.intermediate>${PROJECT_ROOT}\TrachomaFinder\for_testing</param.intermediate>
-    <param.files.only>${PROJECT_ROOT}\TrachomaFinder\for_redistribution_files_only</param.files.only>
-    <param.output>${PROJECT_ROOT}\TrachomaFinder\for_redistribution</param.output>
-    <param.logdir>${PROJECT_ROOT}\TrachomaFinder</param.logdir>
+    <param.target.install.notes>In the following directions, replace MR/v98 by the directory on the target machine where MATLAB is installed, or MR by the directory where the MATLAB Runtime is installed.
+
+(1) Set the environment variable XAPPLRESDIR to this value:
+
+MR/v98/X11/app-defaults
+
+
+(2) If the environment variable LD_LIBRARY_PATH is undefined, set it to the following:
+
+MR/v98/runtime/glnxa64:MR/v98/bin/glnxa64:MR/v98/sys/os/glnxa64:MR/v98/sys/opengl/lib/glnxa64
+
+If it is defined, set it to the following:
+
+${LD_LIBRARY_PATH}:MR/v98/runtime/glnxa64:MR/v98/bin/glnxa64:MR/v98/sys/os/glnxa64:MR/v98/sys/opengl/lib/glnxa64</param.target.install.notes>
+    <param.intermediate>${PROJECT_ROOT}/TrachomaFinder/for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}/TrachomaFinder/for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}/TrachomaFinder/for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}/TrachomaFinder</param.logdir>
     <param.enable.clean.build>false</param.enable.clean.build>
     <param.user.defined.mcr.options />
     <param.target.type>subtarget.standalone</param.target.type>
@@ -35,7 +48,7 @@
     <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
     <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
-    <param.windows.command.prompt>true</param.windows.command.prompt>
+    <param.windows.command.prompt>false</param.windows.command.prompt>
     <param.create.log>false</param.create.log>
     <param.log.file />
     <param.native.matlab>false</param.native.matlab>
@@ -50,12 +63,12 @@
     <unset>
       <param.email />
       <param.company />
+      <param.screenshot />
       <param.guid />
       <param.installpath.string />
       <param.installpath.combo />
       <param.logo />
       <param.install.notes />
-      <param.target.install.notes />
       <param.intermediate />
       <param.files.only />
       <param.output />
@@ -78,71 +91,72 @@
       <param.example />
     </unset>
     <fileset.main>
-      <file>${PROJECT_ROOT}\TrachomaFinder.mlapp</file>
+      <file>${PROJECT_ROOT}/TrachomaFinder.mlapp</file>
     </fileset.main>
     <fileset.resources />
     <fileset.package />
     <fileset.depfun>
-      <file>${MATLAB_ROOT}\toolbox\local\userpath.m</file>
-      <file>${PROJECT_ROOT}\BCOSFIRE\BCOSFIRE_media15.m</file>
-      <file>${PROJECT_ROOT}\BCOSFIRE\BeforeUsing.m</file>
-      <file>${PROJECT_ROOT}\BCOSFIRE\BloodVesselSegmentation.m</file>
-      <file>${PROJECT_ROOT}\BCOSFIRE\SystemConfig.m</file>
-      <file>${PROJECT_ROOT}\deleteNeuralNet.m</file>
-      <file>${PROJECT_ROOT}\deleteTraining.m</file>
-      <file>${PROJECT_ROOT}\editStruct.m</file>
-      <file>${PROJECT_ROOT}\findObjects2DNN.m</file>
-      <file>${PROJECT_ROOT}\generateUID.m</file>
-      <file>${PROJECT_ROOT}\ICC.m</file>
-      <file>${PROJECT_ROOT}\inpoly2.m</file>
-      <file>${PROJECT_ROOT}\inpolygon_fast.m</file>
-      <file>${PROJECT_ROOT}\inspectPhoto.m</file>
-      <file>${PROJECT_ROOT}\listNeuralNet.m</file>
-      <file>${PROJECT_ROOT}\listTraining.m</file>
-      <file>${PROJECT_ROOT}\loadNeuralNet.m</file>
-      <file>${PROJECT_ROOT}\loadTraining.m</file>
-      <file>${PROJECT_ROOT}\magicwand2.m</file>
-      <file>${PROJECT_ROOT}\saveNeuralNet.m</file>
-      <file>${PROJECT_ROOT}\saveTraining.m</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-AutoEyelid.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-clear.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-compare-humans.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-copy.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Delete.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-DiagnoseTI.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Edit.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-export.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-GPU.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-import.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-info.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Masks.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Merge.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Monkeys.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Mushroom-bboxes.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Mushroom-colored.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Mushroom-cutout.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Mushroom.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-new.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Refresh.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-relink-images.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-resize.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-robot.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-split.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Swap-auto-manual.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-Training-set.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-unblock-granted.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\48px-ValidateFollicles.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\Eyelid.png</file>
-      <file>${PROJECT_ROOT}\Trachoma Finder_resources\FollicleFinder.png</file>
+      <file>${PROJECT_ROOT}/BCOSFIRE/BCOSFIRE_media15.m</file>
+      <file>${PROJECT_ROOT}/BCOSFIRE/BeforeUsing.m</file>
+      <file>${PROJECT_ROOT}/BCOSFIRE/BloodVesselSegmentation.m</file>
+      <file>${PROJECT_ROOT}/BCOSFIRE/SystemConfig.m</file>
+      <file>${PROJECT_ROOT}/ICC.m</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-AutoEyelid.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Delete.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-DiagnoseTI.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Edit.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-GPU.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Masks.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Merge.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Monkeys.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Mushroom-bboxes.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Mushroom-colored.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Mushroom-cutout.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Mushroom.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Refresh.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Swap-auto-manual.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-Training-set.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-ValidateFollicles.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-clear.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-compare-humans.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-copy.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-export.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-import.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-info.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-new.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-relink-images.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-resize.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-robot.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-split.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/48px-unblock-granted.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/Eyelid.png</file>
+      <file>${PROJECT_ROOT}/Trachoma Finder_resources/FollicleFinder.png</file>
+      <file>${PROJECT_ROOT}/deleteNeuralNet.m</file>
+      <file>${PROJECT_ROOT}/deleteTraining.m</file>
+      <file>${PROJECT_ROOT}/editStruct.m</file>
+      <file>${PROJECT_ROOT}/findObjects2DNN.m</file>
+      <file>${PROJECT_ROOT}/generateUID.m</file>
+      <file>${PROJECT_ROOT}/inpoly2.m</file>
+      <file>${PROJECT_ROOT}/inpolygon_fast.m</file>
+      <file>${PROJECT_ROOT}/inspectPhoto.m</file>
+      <file>${PROJECT_ROOT}/listNeuralNet.m</file>
+      <file>${PROJECT_ROOT}/listTraining.m</file>
+      <file>${PROJECT_ROOT}/loadNeuralNet.m</file>
+      <file>${PROJECT_ROOT}/loadTraining.m</file>
+      <file>${PROJECT_ROOT}/magicwand2.m</file>
+      <file>${PROJECT_ROOT}/saveNeuralNet.m</file>
+      <file>${PROJECT_ROOT}/saveTraining.m</file>
+      <file>${MATLAB_ROOT}/toolbox/local/userpath.m</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\TrachomaFinder\for_testing" name="TrachomaFinder.exe" optional="false">D:\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder\for_testing\TrachomaFinder.exe</file>
-      <file location="${PROJECT_ROOT}\TrachomaFinder\for_testing" name="splash.png" optional="false">D:\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder\for_testing\splash.png</file>
-      <file location="${PROJECT_ROOT}\TrachomaFinder\for_testing" name="readme.txt" optional="true">D:\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}/TrachomaFinder/for_testing" name="TrachomaFinder" optional="false">/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/TrachomaFinder/for_testing/TrachomaFinder</file>
+      <file location="${PROJECT_ROOT}/TrachomaFinder/for_testing" name="run_TrachomaFinder.sh" optional="false">/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/TrachomaFinder/for_testing/run_TrachomaFinder.sh</file>
+      <file location="${PROJECT_ROOT}/TrachomaFinder/for_testing" name="readme.txt" optional="true">/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/TrachomaFinder/for_testing/readme.txt</file>
+      <file location="${PROJECT_ROOT}/TrachomaFinder/for_testing" name="splash.png" optional="false">/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/TrachomaFinder/for_testing/splash.png</file>
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Program Files\MATLAB\R2020a</root>
+      <root>/home/luca/MATLAB/R2020a</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
         <toolbox name="neuralnetwork" />
@@ -159,18 +173,18 @@
       </toolbox>
     </matlab>
     <platform>
-      <unix>false</unix>
+      <unix>true</unix>
       <mac>false</mac>
-      <windows>true</windows>
+      <windows>false</windows>
       <win2k>false</win2k>
       <winxp>false</winxp>
       <vista>false</vista>
-      <linux>false</linux>
+      <linux>true</linux>
       <solaris>false</solaris>
-      <osver>10.0</osver>
+      <osver>5.4.0-42-generic</osver>
       <os32>false</os32>
       <os64>true</os64>
-      <arch>win64</arch>
+      <arch>glnxa64</arch>
       <matlab>true</matlab>
     </platform>
   </configuration>

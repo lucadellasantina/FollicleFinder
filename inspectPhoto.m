@@ -38,7 +38,13 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     analysisDone= false;    % Flag to determine if we should close the UI
 	
 	% Initialize GUI Figure window
-	fig_handle = figure('Name','Photo inspector (use right panel to define regions)','NumberTitle','off','Color',[.3 .3 .3], 'MenuBar','none', 'Units','norm', ...
+    Title = 'Photo inspector (use right panel to define regions)';
+    if isfield(Prefs, 'Title')
+        Title = [Title ', ' Prefs.Title];
+    end
+    
+	% Initialize GUI Figure window
+	fig_handle = figure('Name', Title,'NumberTitle','off','Color',[.3 .3 .3], 'MenuBar','none', 'Units','norm', ...
 		'WindowButtonDownFcn',@button_down, 'WindowButtonUpFcn',@button_up, 'WindowButtonMotionFcn', @on_click, 'KeyPressFcn', @key_press,'windowscrollWheelFcn', @wheel_scroll, 'CloseRequestFcn', @closeRequest);
 
     % Add GUI conmponents

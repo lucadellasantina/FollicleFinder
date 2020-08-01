@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="1721243582" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="3252932700" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
     <param.appname>Trachoma Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
@@ -12,7 +12,7 @@
     </param.icons>
     <param.summary>Automatic trachoma detector</param.summary>
     <param.description>Copyright 2019-2020 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tpcd79673f_bd18_42b2_9336_c827016e1f92.png</param.screenshot>
+    <param.screenshot>/tmp/tpc624ae77_8fbc_48f6_b278_d905763ee75f.png</param.screenshot>
     <param.version>2.6</param.version>
     <param.products.name>
       <item>MATLAB</item>
@@ -47,6 +47,10 @@
       <file>${PROJECT_ROOT}/TrachomaFinder.mlapp</file>
     </fileset.main>
     <fileset.depfun>
+      <file>${PROJECT_ROOT}/BCOSFIRE/BCOSFIRE_media15.m</file>
+      <file>${PROJECT_ROOT}/BCOSFIRE/BeforeUsing.m</file>
+      <file>${PROJECT_ROOT}/BCOSFIRE/BloodVesselSegmentation.m</file>
+      <file>${PROJECT_ROOT}/BCOSFIRE/SystemConfig.m</file>
       <file>${PROJECT_ROOT}/ICC.m</file>
       <file>${PROJECT_ROOT}/deleteNeuralNet.m</file>
       <file>${PROJECT_ROOT}/deleteTraining.m</file>
@@ -99,7 +103,7 @@
       <vista>false</vista>
       <linux>true</linux>
       <solaris>false</solaris>
-      <osver>5.4.0-37-generic</osver>
+      <osver>5.4.0-42-generic</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>glnxa64</arch>
