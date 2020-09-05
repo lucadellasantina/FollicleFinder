@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="3252932700" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2772050886" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
     <param.appname>Trachoma Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
@@ -12,8 +12,8 @@
     </param.icons>
     <param.summary>Automatic trachoma detector</param.summary>
     <param.description>Copyright 2019-2020 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tpc624ae77_8fbc_48f6_b278_d905763ee75f.png</param.screenshot>
-    <param.version>2.6</param.version>
+    <param.screenshot>/tmp/tpe578b08e_abea_4d93_8357_4a9152f8c6aa.png</param.screenshot>
+    <param.version>2.7</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Computer Vision Toolbox</item>
@@ -103,7 +103,7 @@
       <vista>false</vista>
       <linux>true</linux>
       <solaris>false</solaris>
-      <osver>5.4.0-42-generic</osver>
+      <osver>5.4.0-45-generic</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>glnxa64</arch>

@@ -50,39 +50,39 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
     % Add GUI conmponents
     set(gcf,'units', 'normalized', 'position', [0.05 0.1 0.90 0.76]);
     pnlSettings     = uipanel(  'Title',''          ,'Units','normalized','Position',[.903,.005,.095,.99]); %#ok, unused variable
-    txtValidObjs    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.940,.085,.02],'String',['Total: ' num2str(numel(find(Dots.Filter)))]);
-    txtAction       = uicontrol('Style','text'      ,'Units','normalized','position',[.912,.905,.020,.02],'String','Tool:'); %#ok, unused handle
+    txtValidObjs    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.960,.085,.02],'String',['Total: ' num2str(numel(find(Dots.Filter)))]);
+    txtAction       = uicontrol('Style','text'      ,'Units','normalized','position',[.912,.925,.020,.02],'String','Tool:'); %#ok, unused handle
     if contains(Prefs.Type, 'Eyelid')
-        cmbAction   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Refine (r)', 'Enclose(e)'},'Callback', @cmbAction_changed);
+        cmbAction   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.910,.055,.04],'String', {'Refine (r)', 'Enclose(e)'},'Callback', @cmbAction_changed);
     elseif contains(Prefs.Type, 'Follicles')
-        cmbAction   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.890,.055,.04],'String', {'Add (a)', 'Refine (r)','Select (s)', 'Enclose(e)', 'Magic wand(m)'},'Callback', @cmbAction_changed);
+        cmbAction   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.935,.910,.055,.04],'String', {'Add (a)', 'Refine (r)','Select (s)', 'Enclose(e)', 'Magic wand(m)'},'Callback', @cmbAction_changed);
     end
-    chkShowObjects  = uicontrol('Style','checkbox'  ,'Units','normalized','position',[.912,.870,.085,.02],'String','Show (spacebar)', 'Value',1,'Callback',@chkShowObjects_changed);
-    lstDots         = uicontrol('Style','listbox'   ,'Units','normalized','position',[.907,.600,.085,.25],'String',[],'Callback',@lstDots_valueChanged);
+    chkShowObjects  = uicontrol('Style','checkbox'  ,'Units','normalized','position',[.912,.890,.085,.02],'String','Show (spacebar)', 'Value',1,'Callback',@chkShowObjects_changed);
+    lstDots         = uicontrol('Style','listbox'   ,'Units','normalized','position',[.907,.710,.085,.15],'String',[],'Callback',@lstDots_valueChanged);
     if contains(Prefs.Type, 'Follicles')
-        txtZoom     = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.320,.050,.02],'String','Zoom level:'); %#ok, unused variable
-        btnZoomOut  = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.260,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
-        btnZoomIn   = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.260,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
-        btnScores   = uicontrol('Style','Pushbutton','Units','normalized','position',[.905,.220,.090,.03],'String','Trachoma scoring', 'Callback', @btnScores_clicked); %#ok, unused variable
-        cmbScoreF   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.910,.170,.025,.04],'String', {'F0','F1','F2','F3'}, 'Callback',@cmbScoreF_changed);
-        cmbScoreP   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.940,.170,.025,.04],'String', {'P0','P1','P2','P3'}, 'Callback',@cmbScoreP_changed);
-        cmbScoreC   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.970,.170,.025,.04],'String', {'C0','C1','C2','C3'}, 'Callback',@cmbScoreC_changed);
-        cmbScoreTE  = uicontrol('Style','popup'     ,'Units','normalized','Position',[.915,.125,.030,.04],'String', {'T/E0','T/E1','T/E2','T/E3'}, 'Callback',@cmbScoreTE_changed);
-        cmbScoreCC  = uicontrol('Style','popup'     ,'Units','normalized','Position',[.955,.125,.030,.04],'String', {'CC0','CC1','CC2','CC3'}, 'Callback',@cmbScoreCC_changed);
-        txtDiagnosis= uicontrol('Style','text'      ,'Units','normalized','position',[.905,.095,.045,.02],'String','Diagnosis:'); %#ok, unused variable
-        cmbDiagnosis= uicontrol('Style','popup'     ,'Units','normalized','Position',[.950,.080,.045,.04],'String', {'TNormal','TF','TI', 'TF+TI','TS','TT','CO', 'Ungradable'},'Callback', @cmbDiagnosis_changed);
+        txtZoom     = uicontrol('Style','text'      ,'Units','normalized','position',[.925,.430,.050,.02],'String','Zoom level:'); %#ok, unused variable
+        btnZoomOut  = uicontrol('Style','Pushbutton','Units','normalized','position',[.920,.370,.030,.05],'String','-','Callback',@btnZoomOut_clicked); %#ok, unused variable
+        btnZoomIn   = uicontrol('Style','Pushbutton','Units','normalized','position',[.950,.370,.030,.05],'String','+','Callback',@btnZoomIn_clicked); %#ok, unused variable
+        btnScores   = uicontrol('Style','Pushbutton','Units','normalized','position',[.905,.330,.090,.03],'String','Trachoma scoring', 'Callback', @btnScores_clicked); %#ok, unused variable
+        cmbScoreF   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.910,.280,.025,.04],'String', {'F0','F1','F2','F3'}, 'Callback',@cmbScoreF_changed);
+        cmbScoreP   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.940,.280,.025,.04],'String', {'P0','P1','P2','P3'}, 'Callback',@cmbScoreP_changed);
+        cmbScoreC   = uicontrol('Style','popup'     ,'Units','normalized','Position',[.970,.280,.025,.04],'String', {'C0','C1','C2','C3'}, 'Callback',@cmbScoreC_changed);
+        cmbScoreTE  = uicontrol('Style','popup'     ,'Units','normalized','Position',[.915,.235,.030,.04],'String', {'T/E0','T/E1','T/E2','T/E3'}, 'Callback',@cmbScoreTE_changed);
+        cmbScoreCC  = uicontrol('Style','popup'     ,'Units','normalized','Position',[.955,.235,.030,.04],'String', {'CC0','CC1','CC2','CC3'}, 'Callback',@cmbScoreCC_changed);
+        txtDiagnosis= uicontrol('Style','text'      ,'Units','normalized','position',[.905,.205,.090,.02],'String','Trachoma Diagnosis:'); %#ok, unused variable
+        lstDiagnosis= uicontrol('Style','listbox'   ,'Units','normalized','Position',[.907,.080,.085,.12],'String', {'TNormal','TF','TI', 'TF+TI','TS','TT','CO', 'Ungradable'}, 'max', 1, 'Min', 1 ,'Callback', @lstDiagnosis_changed);
     end
     btnSave         = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.020,.088,.05],'String','Done','Callback',@btnSave_clicked); %#ok, unused variable
     
     % Selected object info
-    btnDelete       = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.560,.088,.04],'String','Delete Item (d)','Callback',@btnDelete_clicked); %#ok, unused variable
-    txtSelObj       = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.530,.085,.02],'String','Selected item'); %#ok, unused variable
-    txtSelObjID     = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.500,.085,.02],'String','ID# :');
-    txtSelObjPos    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.470,.085,.02],'String','Pos : ');
-    txtSelObjPix    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.440,.085,.02],'String','Pixels : ');
-    txtSelObjValid  = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.410,.085,.02],'String','Type : ');    
+    btnDelete       = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.660,.088,.04],'String','Delete Item (d)','Callback',@btnDelete_clicked); %#ok, unused variable
+    txtSelObj       = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.630,.085,.02],'String','Selected item'); %#ok, unused variable
+    txtSelObjID     = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.600,.085,.02],'String','ID# :');
+    txtSelObjPos    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.570,.085,.02],'String','Pos : ');
+    txtSelObjPix    = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.540,.085,.02],'String','Pixels : ');
+    txtSelObjValid  = uicontrol('Style','text'      ,'Units','normalized','position',[.907,.510,.085,.02],'String','Type : ');    
     if contains(Prefs.Type, 'Follicles')
-        btnValidate = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.360,.088,.04],'String','Change validation (v)','Callback',@btnValidate_clicked); %#ok, unused variable
+        btnValidate = uicontrol('Style','Pushbutton','Units','normalized','position',[.907,.460,.088,.04],'String','Change validation (v)','Callback',@btnValidate_clicked); %#ok, unused variable
     end
     
     % Main drawing area and related handles
@@ -100,7 +100,7 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         cmbScoreC_assign(Dots.Scores.C);
         cmbScoreTE_assign(Dots.Scores.TE);
         cmbScoreCC_assign(Dots.Scores.CC);
-        cmbDiagnosis_assign(Dots.Diagnosis);    
+        lstDiagnosis_assign(Dots.Diagnosis);    
     end
     lstDotsRefresh;   % List all objects and refresh image
     uiwait;           % The GUI waits for user interaction as default state 
@@ -248,30 +248,28 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
         end
     end
 
-    function cmbDiagnosis_changed(src, event) %#ok, unused parameters
-        switch get(src, 'Value')
-            case 1, Dots.Diagnosis = 'TNormal';
-            case 2, Dots.Diagnosis = 'TF';
-            case 3, Dots.Diagnosis = 'TI';
-            case 4, Dots.Diagnosis = 'TF+TI';
-            case 5, Dots.Diagnosis = 'TS';
-            case 6, Dots.Diagnosis = 'TT';
-            case 7, Dots.Diagnosis = 'CO';
-            case 8, Dots.Diagnosis = 'Ungradable';
-        end
+    function lstDiagnosis_changed(src, event) %#ok, unused parameters
+        % Update diagnosis
+        lstDiagNames = get(src, 'String'); 
+        newDiagValue = get(src, 'Value');
+        
+        % One diagnosis: store as char, multiple diagn:store as cell array        
+        Dots.Diagnosis = lstDiagNames{newDiagValue};
     end
 
-    function cmbDiagnosis_assign(newDiagnosis)
+    function lstDiagnosis_assign(newDiagnosis)
+        % Populate with all new diagnoses
         switch newDiagnosis
-            case 'TNormal',     set(cmbDiagnosis, 'Value', 1);                
-            case 'TF',          set(cmbDiagnosis, 'Value', 2);
-            case 'TI',          set(cmbDiagnosis, 'Value', 3);
-            case 'TF+TI',       set(cmbDiagnosis, 'Value', 4);
-            case 'TS',          set(cmbDiagnosis, 'Value', 5);
-            case 'TT',          set(cmbDiagnosis, 'Value', 6);
-            case 'CO',          set(cmbDiagnosis, 'Value', 7);
-            case 'Ungradable',  set(cmbDiagnosis, 'Value', 8);
+            case 'TNormal',     newValue = 1;
+            case 'TF',          newValue = 2;
+            case 'TI',          newValue = 3;
+            case 'TF+TI',       newValue = 4;
+            case 'TS',          newValue = 5;
+            case 'TT',          newValue = 6;
+            case 'CO',          newValue = 7;
+            case 'Ungradable',  newValue = 8;
         end
+        set(lstDiagnosis, 'Value', newValue);       
     end
 
     function lstDots_valueChanged(src,event) %#ok, unused arguments

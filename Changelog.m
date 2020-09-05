@@ -1,7 +1,12 @@
-%% Follicle Finder - Recognize trachomatous follicles in eyelid photographs
+%% Trachoma Finder - Recognize trachomatous follicles in eyelid photographs
 %  Copyright (C) 2019-2020 Luca Della Santina
 %
 %% ChangeLog
+%
+% Version 2.7 - created on 2020-09-05
+% 
+% + inspectPhoto: Diagnosis UI changed from combobox to listbox
+% + Import record: Progress dialog with verbose info
 %
 % Version 2.3 - created on 2020-03-23
 % 

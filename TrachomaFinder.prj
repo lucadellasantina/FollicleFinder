@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="1428831541" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/TrachomaFinder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="TrachomaFinder" preferred-package-location="/home/luca/C:\home\luca\C:\home\luca\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder\for_redistribution" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="1428831541" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/TrachomaFinder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="TrachomaFinder" preferred-package-location="/home/luca/C:\home\luca\C:\home\luca\C:\home\luca\Dropbox\MATLAB scripts\TrachomaFinder\TrachomaFinder\for_redistribution" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>TrachomaFinder</param.appname>
     <param.icon>${PROJECT_ROOT}/TrachomaFinder_resources/icon.ico</param.icon>
     <param.icons>
@@ -8,7 +8,7 @@
       <file>${PROJECT_ROOT}/TrachomaFinder_resources/icon_24.png</file>
       <file>${PROJECT_ROOT}/TrachomaFinder_resources/icon_16.png</file>
     </param.icons>
-    <param.version>2.6</param.version>
+    <param.version>2.7</param.version>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email />
     <param.company />
@@ -181,7 +181,7 @@ ${LD_LIBRARY_PATH}:MR/v98/runtime/glnxa64:MR/v98/bin/glnxa64:MR/v98/sys/os/glnxa
       <vista>false</vista>
       <linux>true</linux>
       <solaris>false</solaris>
-      <osver>5.4.0-42-generic</osver>
+      <osver>5.4.0-45-generic</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>glnxa64</arch>
