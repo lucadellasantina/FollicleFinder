@@ -3,6 +3,14 @@
 %
 %% ChangeLog
 %
+% Version 2.8 - created on 2020-11-18
+% 
+% + App ported to MATLAB R2020b, now required
+% + Single instance enforced
+% + Custom app icon
+% + Import B/W images and automatically convert them to RGB
+% + Fixed error if user cancels photo folder selection
+%
 % Version 2.7 - created on 2020-09-05
 % 
 % + inspectPhoto: Diagnosis UI changed from combobox to listbox
