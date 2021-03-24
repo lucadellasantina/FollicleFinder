@@ -682,6 +682,10 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             case {'Refine'}
                 if MousePosX > size(Img,2)                    
                     [x,y] = getpoints(animatedLine);
+                    if isempty(x) || isempty(y)
+                        x = ceil(click_point(1,1));
+                        y = ceil(click_point(1,2)); 
+                    end                    
 
                     % Locate position of points in respect to zoom area
                     PosZoomX = x - size(Img,2)-1;
@@ -721,8 +725,9 @@ function Dots = inspectPhoto(Img, Dots, Prefs)
             click_point = get(gca, 'CurrentPoint');
             PosX = ceil(click_point(1,1));
             PosY = ceil(click_point(1,2));
+            ZoomFactor = size(Img,1) / CutNumVox(1);
                         
-            if PosY < 0 || PosY > size(Img,1)-brushSize
+            if PosY < 0 || PosY > size(Img,1)-(brushSize*0.50*ZoomFactor)
                 % Display the default arrow everywhere else
                 set(fig_handle, 'Pointer', 'arrow');
                 if isvalid(brush), delete(brush); end 

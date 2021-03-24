@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="2588237708" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="4095400707" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
     <param.appname>Trachoma Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
@@ -11,8 +11,8 @@
       <file>${PROJECT_ROOT}/Trachoma Finder_resources/icon_16.png</file>
     </param.icons>
     <param.summary>Automatic trachoma detector</param.summary>
-    <param.description>Copyright 2019-2020 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tp880303dc_7127_4e66_884a_27eb89b550eb.png</param.screenshot>
+    <param.description>Copyright 2019-2021 Luca Della Santina</param.description>
+    <param.screenshot>/tmp/tp95f1ed46_54c8_40f2_9bfc_43a67626d5f0.png</param.screenshot>
     <param.version>2.8</param.version>
     <param.products.name>
       <item>MATLAB</item>
@@ -29,10 +29,10 @@
       <item>19</item>
     </param.products.id>
     <param.products.version>
-      <item>9.9</item>
-      <item>9.3</item>
-      <item>14.1</item>
-      <item>11.2</item>
+      <item>9.10</item>
+      <item>10.0</item>
+      <item>14.2</item>
+      <item>11.3</item>
       <item>12.0</item>
     </param.products.version>
     <param.platforms />
@@ -74,7 +74,7 @@
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>/home/luca/MATLAB/R2020b</root>
+      <root>/home/luca/MATLAB/R2021a</root>
       <toolboxes>
         <toolbox name="matlabcoder" />
         <toolbox name="gpucoder" />
@@ -105,7 +105,7 @@
       <vista>false</vista>
       <linux>true</linux>
       <solaris>false</solaris>
-      <osver>5.8.0-29-generic</osver>
+      <osver>5.8.0-45-generic</osver>
       <os32>false</os32>
       <os64>true</os64>
       <arch>glnxa64</arch>
