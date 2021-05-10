@@ -20,12 +20,11 @@
 function tblT = listTraining
 %% List available object names and UIDs
 TrainingFolder = [userpath filesep 'FollicleFinder' filesep 'Training'];
-files = dir(TrainingFolder); % List the content of /Training folder
-files = files(~[files.isdir]);  % Keep only files, discard subfolders
+files = dir([TrainingFolder filesep '*.mat']); % List mat files in /Training folder
 
 tblT = repmat(table({'Empty'}, {'Empty'}, {'Empty'}, {datetime}, {'Empty'}, {'Empty'}),numel(files),1);
 for d = 1:numel(files)
-    T = load([TrainingFolder filesep files(d).name], 'User', 'ImagesFolder', 'Type', 'Date', 'UID', 'ImagesList', 'ImagesTODOFollicles', 'ImagesTODOEyelid');
+    T = load([TrainingFolder filesep files(d).name]);
     FolliclesDone = numel(T.ImagesList)-numel(T.ImagesTODOFollicles);
     EyelidDone    = numel(T.ImagesList)-numel(T.ImagesTODOEyelid);
     DoneString    = ['F:' num2str(FolliclesDone) '/' num2str(numel(T.ImagesList)) ' E:' num2str(EyelidDone) '/' num2str(numel(T.ImagesList))];

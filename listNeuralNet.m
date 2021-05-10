@@ -20,8 +20,7 @@
 function tblN = listNeuralNet
 %% List available object names and UIDs
 NetFolder = [userpath filesep 'FollicleFinder' filesep 'NeuralNet'];
-files = dir(NetFolder); % List the content of /Training folder
-files = files(~[files.isdir]);  % Keep only files, discard subfolders
+files = dir([NetFolder filesep '*.mat']); % List the content of /Training folder
 
 tblN = repmat(table({'Empty'}, {'Empty'}, {'Empty'}, {'Empty'}, {datetime}, false, {'Empty'}),numel(files),1);
 for d = 1:numel(files)

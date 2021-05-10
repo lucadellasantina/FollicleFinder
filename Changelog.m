@@ -3,6 +3,12 @@
 %
 %% ChangeLog
 %
+% Version 2.9 - created on 2021-05-10
+% 
+% + App ported to MATLAB R2021a, now required
+% + New Backup annotations button
+% + listTraining now fully loads .mat files to avoid corruption
+%
 % Version 2.8 - created on 2020-11-18
 % 
 % + App ported to MATLAB R2020b, now required
