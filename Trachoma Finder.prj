@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.apptool" plugin-version="1.0">
-  <configuration build-checksum="3535769938" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
+  <configuration build-checksum="2987084854" file="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder/Trachoma Finder.prj" location="/home/luca/Dropbox/MATLAB scripts/TrachomaFinder" name="Trachoma Finder" target="target.mlapps" target-name="Package App">
     <param.appname>Trachoma Finder</param.appname>
     <param.authnamewatermark>Luca Della Santina</param.authnamewatermark>
     <param.email>luca.dellasantina@gmail.com</param.email>
@@ -12,8 +12,8 @@
     </param.icons>
     <param.summary>Automatic trachoma detector</param.summary>
     <param.description>Copyright 2019-2021 Luca Della Santina</param.description>
-    <param.screenshot>/tmp/tp821e03bc_fb44_40bf_8df4_58efdf1030d3.png</param.screenshot>
-    <param.version>2.9</param.version>
+    <param.screenshot>/tmp/tp7da4cf8a_5c92_417e_9de8_fddcc9017e5b.png</param.screenshot>
+    <param.version>2.10</param.version>
     <param.products.name>
       <item>MATLAB</item>
       <item>Computer Vision Toolbox</item>

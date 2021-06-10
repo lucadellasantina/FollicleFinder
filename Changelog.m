@@ -3,6 +3,19 @@
 %
 %% ChangeLog
 %
+% Version 2.11 - created on 2021-06-09
+% 
+% + Generate training data: Blur outside eyelid for image classifiers
+% + Export masked eyelid/follicles with optional blurring in the surrounds
+%
+% Version 2.10 - created on 2021-06-02
+% 
+% + New Net type: Image Classifier
+% + New Net target: TF (to use with image classifiers)
+% + New Grad-Cam exploration of net activation heatmaps
+% + New ImageLIME exploration of net activation
+% + New occlusion sensitivity exploration of net activation
+%
 % Version 2.9 - created on 2021-05-10
 % 
 % + App ported to MATLAB R2021a, now required
